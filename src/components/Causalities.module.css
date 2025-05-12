@@ -30,7 +30,7 @@
   flex-direction: column;
   justify-content: flex-start;
   padding: 0.125rem 0.5rem 0.5rem;
-  margin-bottom: 0.25rem;
+  margin: 0.5rem 0;
   border-radius: 10px;
   background-color: #4c396e;
   box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2)
@@ -104,6 +104,7 @@
 
 .causality-effect {
   display: flex;
+  position: relative;
   flex-direction: column;
   justify-content: flex-start;
   align-items: flex-start;
@@ -112,6 +113,15 @@
   border-radius: 10px;
   background-color: #4c396e;
   box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4)
+}
+
+.causality-effect-delete {
+  position: absolute;
+  top: 3px;
+  right: 0px;
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
 }
 
 .causality-effect:last-child {

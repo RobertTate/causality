@@ -4,7 +4,12 @@ import { AnimatePresence, motion } from "motion/react"
 import styles from "./Causalities.module.css";
 import { DROP_ZONE_ID, ID } from "../constants";
 import { useAppStore } from "../functions/hooks";
-import { handleRemoveCausality, updateCauseTokenData, updateEffectTokenData } from "../functions";
+import {
+  handleRemoveCausality,
+  handleRemoveEffect,
+  updateCauseTokenData,
+  updateEffectTokenData
+} from "../functions";
 import type { CausalityData, CauseTrigger, EffectAction } from "../types";
 import { mergeWith, isArray } from "lodash";
 import fire from "../assets/fire.svg";
@@ -62,14 +67,14 @@ export const Causalities = memo(() => {
                   <p className={styles["causality-cause-name"]}>{cData.cause.name}</p>
                 </div>
                 <div className={styles["causality-cause-trigger-settings"]}>
-                  <select 
+                  <select
                     onChange={(event) => {
-                    if (cData.cause) {
-                      return updateCauseTokenData(cData.id, cData.cause.tokenID, 'trigger', event.target.value as CauseTrigger)
-                    }
-                    }} 
+                      if (cData.cause) {
+                        return updateCauseTokenData(cData.id, cData.cause.tokenID, 'trigger', event.target.value as CauseTrigger)
+                      }
+                    }}
                     name="cause-triggers"
-                    value={cData.cause.trigger || ""}  
+                    value={cData.cause.trigger || ""}
                   >
                     <option value="">-- Please choose an option --</option>
                     <option value="collision">Is Collided With</option>
@@ -88,16 +93,25 @@ export const Causalities = memo(() => {
                     if (!effectsIDSet.has(effect.effectId)) {
                       effectsIDSet.add(effect.effectId);
                       return (
-                        <div key={effect.effectId} className={styles["causality-effect"]}>
+                        <motion.div
+                          key={effect.effectId}
+                          className={styles["causality-effect"]}
+                          initial={{ opacity: 0, y: -10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 10 }}
+                          transition={{ duration: 0.25 }}
+                          layout="position"
+                        >
+                          <img onClick={() => handleRemoveEffect(cData.id, effect.tokenID, effect.effectId)} className={styles["causality-effect-delete"]} src={fire} alt="Delete Causality" />
                           <div className={styles["causality-effect-info"]}>
                             <img className={styles["causality-effect-image"]} src={effect?.imageUrl} alt={effect?.name} />
                             <p className={styles["causality-effect-name"]}>{effect?.name} <span>will:</span></p>
                           </div>
                           <div className={styles["causality-effect-action-settings"]}>
-                            <select 
+                            <select
                               name="effect-actions"
                               onChange={(event) => {
-                                updateEffectTokenData(cData.id, effect.tokenID, "action", event.target.value as EffectAction)
+                                updateEffectTokenData(cData.id, effect.tokenID, effect.effectId, "action", event.target.value as EffectAction)
                               }}
                               value={effect.action || ""}
                             >
@@ -108,13 +122,18 @@ export const Causalities = memo(() => {
                               <option value="dissappear">Disappear</option>
                             </select>
                           </div>
-                        </div>
+                        </motion.div>
                       )
                     }
                   })}
                 </>
               ) : (
-                <p><em>Drag tokens from your token pool here to add them as an "Effect" token.</em></p>
+                <motion.p
+                  key="emptyEffectDisclaimer"
+                  layout="position"
+                >
+                  <em>Drag tokens from your token pool here to add them as an "Effect" token.</em>
+                </motion.p>
               )}
             </Droppable>
           </div>

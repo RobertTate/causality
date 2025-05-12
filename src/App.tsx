@@ -1,13 +1,12 @@
 import OBR from "@owlbear-rodeo/sdk";
 import { useEffect, useState } from "react";
 import { CausalityManager } from "./components/CausalityManager";
-import { useAppStore, useCausalityPointer, useCausalityTokenSetterMenuContext } from "./functions/hooks";
+import { useCausalityPointer, useCausalityTokenSetterMenuContext } from "./functions/hooks";
 import type { Role } from "./types";
 import icon from "./assets/icon.svg";
 import styles from "./App.module.css";
 
 function App() {
-  const { tokens } = useAppStore();
   const [appIsReady, setAppIsReady] = useState(false);
   const [role, setRole] = useState<Role>(undefined);
 

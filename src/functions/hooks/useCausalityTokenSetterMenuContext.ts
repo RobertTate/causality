@@ -21,7 +21,12 @@ export const useCausalityTokenSetterMenuContext = () => {
           },
           {
             icon: "/icon.svg",
-            label: "Add To Causality"
+            label: "Add To Causality",
+            filter: {
+              every: [
+                { key: "type", value: "IMAGE" },
+              ],
+            },
           }
         ],
         onClick: async (context) => {

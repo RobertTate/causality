@@ -30,6 +30,7 @@ export const updateCauseTokenData = <K extends keyof CauseTokenData>(
 export const updateEffectTokenData = <K extends keyof EffectTokenData>(
   causalityID: string,
   tokenID: string,
+  effectID: string,
   propName: K,
   propValue: EffectTokenData[K],
 ) => {
@@ -46,7 +47,7 @@ export const updateEffectTokenData = <K extends keyof EffectTokenData>(
         const effects = matchingCausality.effects;
         if (effects && effects.length > 0) {
           const matchingEffect = effects.find((effect) => {
-            return effect.tokenID === tokenID;
+            return effect.effectId === effectID;
           });
           if (matchingEffect) {
             matchingEffect[propName] = propValue;
