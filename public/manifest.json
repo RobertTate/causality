@@ -1,0 +1,17 @@
+{
+    "name": "Causality",
+    "version": "1.0.0",
+    "manifest_version": 1,
+    "author": "Robert Tate",
+    "description": "Trigger Effects through Token Collision",
+    "homepage_url": "https://github.com/RobertTate/causality",
+    "icon": "/icon.svg",
+    "action": {
+      "title": "Causality",
+      "icon": "/icon.svg",
+      "popover": "/",
+      "height": 650,
+      "width": 631
+    }
+  }
+  

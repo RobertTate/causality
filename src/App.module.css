@@ -1,0 +1,14 @@
+.app-main {
+  padding: 0.5rem 1rem;
+}
+
+.app-header {
+  display: flex;
+  align-items: center;
+}
+
+.app-header-icon {
+  width: 70px;
+  margin-right: 0.25rem;
+  margin-bottom: -7px;
+}

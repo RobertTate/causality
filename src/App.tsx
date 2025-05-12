@@ -1,35 +1,53 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import OBR from "@owlbear-rodeo/sdk";
+import { useEffect, useState } from "react";
+import { CausalityManager } from "./components/CausalityManager";
+import { useAppStore, useCausalityPointer, useCausalityTokenSetterMenuContext } from "./functions/hooks";
+import type { Role } from "./types";
+import icon from "./assets/icon.svg";
+import styles from "./App.module.css";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const { tokens } = useAppStore();
+  const [appIsReady, setAppIsReady] = useState(false);
+  const [role, setRole] = useState<Role>(undefined);
+
+  useEffect(() => {
+    const initApp = async () => {
+      const roleValue = await OBR.player.getRole();
+      setRole(roleValue);
+      setAppIsReady(true);
+    };
+
+    OBR.onReady(() => {
+      initApp();
+    });
+  }, []);
+
+  useCausalityPointer();
+  useCausalityTokenSetterMenuContext();
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    <main className={styles["app-main"]}>
+      <h1 className={styles["app-header"]}>
+        <img
+          className={styles["app-header-icon"]}
+          id="headingImage"
+          alt="Causality Logo"
+          src={icon}
+        ></img>
+        Causality
+      </h1>
+      {appIsReady && role === "GM" ? (
+        <>
+          <CausalityManager />
+        </>
+      ) : (
+        <>
+          Not for you! Go away.
+        </>
+      )}
+    </main>
   )
-}
+};
 
-export default App
+export default App;
