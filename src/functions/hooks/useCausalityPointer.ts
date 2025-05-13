@@ -1,93 +1,44 @@
-import OBR, { isImage, type Item, type InteractionManager, type ToolMode } from "@owlbear-rodeo/sdk";
+import OBR, { isImage, type Item, type InteractionManager } from "@owlbear-rodeo/sdk";
 import { useEffect } from "react";
 import { ID } from "../../constants";
+import { CausalityToken } from "../../types";
+import { useAppStore } from "./useAppStore";
+import { getImageBoundingBox, intersect } from "../boundingBox";
 
 export const useCausalityPointer = () => {
+  const { collisionTokensRef } = useAppStore()
+
+  const checkForCollisions = (item: Item) => {
+    const currentTarget = item as CausalityToken;
+    if (currentTarget) {
+      const tokensToCheck = collisionTokensRef.current;
+      tokensToCheck.forEach((cToken) => {
+        if (currentTarget.id !== cToken.id) {
+          const tokenBeingDraggedBB = getImageBoundingBox(currentTarget);
+          const tokenWithCollisionDetection = getImageBoundingBox(cToken);
+          if (tokenBeingDraggedBB && tokenWithCollisionDetection) {
+            const collisionHasOccured = intersect(tokenBeingDraggedBB, tokenWithCollisionDetection);
+            if (collisionHasOccured && cToken.isCollisionUpdateUnderway !== true) {
+              cToken.isCollisionUpdateUnderway = true;
+              OBR.scene.items.updateItems(((item) => {
+                return item.id === cToken.id;
+              }), (items) => {
+                const itemToUpdate = items[0] as CausalityToken;
+                const itemMetaData = itemToUpdate.metadata[ID];
+                if (itemMetaData.isCollided === false) {
+                  itemMetaData.isCollided = true;
+                }
+              })
+            }
+          }
+        }
+      })
+    }
+  }
+
   useEffect(() => {
     OBR.onReady(() => {
       let interaction: InteractionManager<Item> | string = "";
-      let isUsingOnToolDragMove = false;
-
-      const causalTrackingMode: ToolMode = {
-        id: `${ID}/tracking-mode`,
-        icons: [
-          {
-            icon: "/loader.svg",
-            label: "Checking For Effects...",
-            filter: {
-              activeTools: ["rodeo.owlbear.tool/move"],
-            },
-          },
-        ],
-        cursors: [
-          {
-            cursor: "grabbing",
-            filter: {
-              target: [
-                { key: "locked", value: true, operator: "!=" },
-                { key: "image", value: undefined, operator: "!=" },
-              ],
-            },
-          },
-        ],
-        async onToolDragMove(_, ev) {
-          isUsingOnToolDragMove = true;
-          if (interaction) {
-            if (typeof interaction !== "string") {
-              const [update] = interaction;
-              update((item) => {
-                item.position = ev.pointerPosition;
-              });
-            }
-          }
-        },
-        async onToolMove(_, ev) {
-          if (interaction && !isUsingOnToolDragMove) {
-            if (typeof interaction !== "string") {
-              const [update] = interaction;
-              update((item) => {
-                item.position = ev.pointerPosition;
-              });
-            }
-          }
-        },
-        async onToolDragCancel() {
-          if (interaction && typeof interaction !== "string") {
-            const [_, stop] = interaction;
-            stop();
-          }
-          interaction = "";
-          await OBR.tool.activateMode("rodeo.owlbear.tool/move", `${ID}/pointer-mode`);
-          isUsingOnToolDragMove = false;
-        },
-        async onToolUp(_, ev) {
-          if (interaction && typeof interaction !== "string") {
-            const [update, stop] = interaction;
-            const itemToUpdate = update((item) => {
-              item.position = ev.pointerPosition;
-            });
-
-            await OBR.scene.items.updateItems(isImage, (items) => {
-              for (let item of items) {
-                if (item.id === itemToUpdate.id) {
-                  item.position = itemToUpdate.position;
-                }
-              }
-            })
-
-            stop();
-          }
-
-          interaction = "";
-          isUsingOnToolDragMove = false;
-
-          await OBR.tool.activateMode("rodeo.owlbear.tool/move", `${ID}/pointer-mode`);
-        },
-        async onDeactivate() {
-          await OBR.tool.removeMode(`${ID}/tracking-mode`);
-        }
-      }
-
       OBR.tool.createMode({
         id: `${ID}/pointer-mode`,
         icons: [
@@ -99,8 +50,14 @@ export const useCausalityPointer = () => {
             },
           },
         ],
+        shortcut: "C",
         preventDrag: {
           dragging: true,
+          target: [
+            { key: ["locked"], value: true, coordinator: "||" },
+            { key: ["metadata", "com.roberttate.causality", "isCausalityToken"], value: false, coordinator: "||" },
+            { key: ["metadata", "com.roberttate.causality", "isCausalityToken"], value: undefined },
+          ]
         },
         cursors: [
           {
@@ -114,14 +71,57 @@ export const useCausalityPointer = () => {
           },
           { cursor: "all-scroll" },
         ],
-        async onToolDown(_, ev) {
+        async onToolDragStart(_, ev) {
           const item = ev.target
           if (item && isImage(item) && item.locked === false) {
-            console.log(item);
             interaction = "starting";
             interaction = await OBR.interaction.startItemInteraction(item);
-            await OBR.tool.createMode(causalTrackingMode);
-            await OBR.tool.activateMode("rodeo.owlbear.tool/move", `${ID}/tracking-mode`);
+          }
+        },
+        async onToolDragMove(_, ev) {
+          if (interaction) {
+            if (typeof interaction !== "string") {
+              const [update] = interaction;
+              update((item) => {
+                item.position = ev.pointerPosition;
+                checkForCollisions(item);
+              });
+            }
+          }
+        },
+        async onToolDragEnd(_, ev) {
+          if (interaction) {
+            if (typeof interaction !== "string") {
+              const [update, stop] = interaction;
+              const itemToUpdate = update((item) => {
+                item.position = ev.pointerPosition;
+              });
+              await OBR.scene.local.updateItems((item) => {
+                return item.type === "LIGHT"
+              }, (items) => {
+                for (let item of items) {
+                  item.visible = false;
+                }
+              });
+              await OBR.scene.items.updateItems((item) => {
+                return item.id === itemToUpdate.id;
+              }, (items) => {
+                for (let item of items) {
+                  if (item.id === itemToUpdate.id) {
+                    item.position = itemToUpdate.position;
+                  }
+                }
+              });
+              await OBR.scene.local.updateItems((item) => {
+                return item.type === "LIGHT"
+              }, (items) => {
+                for (let item of items) {
+                  item.visible = true;
+                }
+              });
+              stop();
+              interaction = "";
+            }
           }
         },
       });

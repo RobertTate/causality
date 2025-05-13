@@ -6,11 +6,11 @@ export const handleRemoveCausality = (cData: CausalityData) => {
     const tokensToRemoveCausalityFrom: string[] = [];
     if (cData.effects && cData.effects.length > 0) {
       cData.effects.forEach((effect) => {
-        tokensToRemoveCausalityFrom.push(effect.tokenID);
+        tokensToRemoveCausalityFrom.push(effect.tokenId);
       })
     }
     if (cData.cause) {
-      tokensToRemoveCausalityFrom.push(cData.cause.tokenID);
+      tokensToRemoveCausalityFrom.push(cData.cause.tokenId);
     };
 
     OBR.scene.items.updateItems(((item) => {

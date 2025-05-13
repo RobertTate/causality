@@ -38,7 +38,8 @@ export const useCausalityTokenSetterMenuContext = () => {
                   selectedItem.metadata[ID]["isCausalityToken"] = false;
                 } else {
                   selectedItem.metadata[ID] = {
-                    isCausalityToken: true
+                    isCausalityToken: true,
+                    isCollided: false,
                   }
                 }
               }

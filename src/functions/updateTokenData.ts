@@ -19,7 +19,7 @@ export const updateCauseTokenData = <K extends keyof CauseTokenData>(
       });
       if (matchingCausality) {
         const causeToken = matchingCausality.cause;
-        if (causeToken && causeToken.tokenID === tokenID) {
+        if (causeToken && causeToken.tokenId === tokenID) {
           causeToken[propName] = propValue;
         }
       }

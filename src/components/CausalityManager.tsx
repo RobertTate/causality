@@ -35,11 +35,13 @@ export const CausalityManager = () => {
         itemToUpdate.metadata[ID].causalities.push({
           id: uniqueKey,
           cause: {
-            status: "pending",
-            tokenID: itemToUpdate.id,
+            status: "Pending",
+            tokenId: itemToUpdate.id,
+            causalityId: uniqueKey,
             name: itemToUpdate.name,
             label: itemToUpdate.text?.plainText,
-            imageUrl: itemToUpdate.image.url
+            imageUrl: itemToUpdate.image.url,
+            trigger: "",
           }
         })
       });
@@ -65,21 +67,25 @@ export const CausalityManager = () => {
             alreadyPresentCausality.effects = [];
           }
           alreadyPresentCausality.effects.push({
-            tokenID: itemToUpdate.id,
+            tokenId: itemToUpdate.id,
+            causalityId: alreadyPresentCausality.id,
             name: itemToUpdate.name,
             label: itemToUpdate.text?.plainText,
             imageUrl: itemToUpdate.image.url,
             effectId: uniqueKey,
+            action: "",
           })
         } else {
           itemToUpdate.metadata[ID].causalities.push({
             id: causalityId,
             effects: [{
-              tokenID: itemToUpdate.id,
+              tokenId: itemToUpdate.id,
+              causalityId: causalityId,
               name: itemToUpdate.name,
               label: itemToUpdate.text?.plainText,
               imageUrl: itemToUpdate.image.url,
               effectId: uniqueKey,
+              action: "",
             }]
           })
         }

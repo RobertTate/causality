@@ -27,15 +27,19 @@ function App() {
 
   return (
     <main className={styles["app-main"]}>
-      <h1 className={styles["app-header"]}>
-        <img
-          className={styles["app-header-icon"]}
-          id="headingImage"
-          alt="Causality Logo"
-          src={icon}
-        ></img>
-        Causality
-      </h1>
+      <div className={styles["app-header-area"]}>
+        <h1 className={styles["app-header"]}>
+          <img
+            className={styles["app-header-icon"]}
+            id="headingImage"
+            alt="Causality Logo"
+            src={icon}
+          ></img>
+          Causality
+        </h1>
+        <p>Automate what happens next</p>
+      </div>
+
       {appIsReady && role === "GM" ? (
         <>
           <CausalityManager />

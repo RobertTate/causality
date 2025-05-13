@@ -6,6 +6,7 @@ import { DROP_ZONE_ID, ID } from "../constants";
 import { useAppStore } from "../functions/hooks";
 import {
   handleRemoveCausality,
+  handleResetCausality,
   handleRemoveEffect,
   updateCauseTokenData,
   updateEffectTokenData
@@ -13,6 +14,7 @@ import {
 import type { CausalityData, CauseTrigger, EffectAction } from "../types";
 import { mergeWith, isArray } from "lodash";
 import fire from "../assets/fire.svg";
+import reset from "../assets/reset.svg";
 
 export const Causalities = memo(() => {
   const { tokens } = useAppStore();
@@ -50,13 +52,15 @@ export const Causalities = memo(() => {
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.25 }}
           layout="position"
+          data-status={cData.cause?.status}
         >
           <div className={styles["causality-title-area"]}>
             <p>Causes</p>
-            <img onClick={() => handleRemoveCausality(cData)} className={styles["causality-delete"]} src={fire} alt="Delete Causality" />
+            <img title="Reset" onClick={() => handleResetCausality(cData)} className={styles["causality-reset"]} src={reset} alt="Reset Causality" />
+            <p className={styles["causality-status"]}>Status: <span data-status={cData.cause?.status}>{cData.cause?.status}</span></p>
+            <img title="Delete" onClick={() => handleRemoveCausality(cData)} className={styles["causality-delete"]} src={fire} alt="Delete Causality" />
             <p>Effects</p>
           </div>
-
           <div className={styles["causality-cause-effect-area"]}>
             {/* CAUSE TOKEN AREA */}
             {cData.cause && (
@@ -70,11 +74,12 @@ export const Causalities = memo(() => {
                   <select
                     onChange={(event) => {
                       if (cData.cause) {
-                        return updateCauseTokenData(cData.id, cData.cause.tokenID, 'trigger', event.target.value as CauseTrigger)
+                        return updateCauseTokenData(cData.id, cData.cause.tokenId, 'trigger', event.target.value as CauseTrigger)
                       }
                     }}
                     name="cause-triggers"
                     value={cData.cause.trigger || ""}
+                    disabled={cData.cause?.status === "Complete" ? true : false}
                   >
                     <option value="">-- Please choose an option --</option>
                     <option value="collision">Is Collided With</option>
@@ -84,7 +89,6 @@ export const Causalities = memo(() => {
                 </div>
               </div>
             )}
-
             {/* EFFECT TOKEN AREA */}
             <Droppable id={cData.id}>
               {cData.effects && cData.effects.length > 0 ? (
@@ -102,7 +106,7 @@ export const Causalities = memo(() => {
                           transition={{ duration: 0.25 }}
                           layout="position"
                         >
-                          <img onClick={() => handleRemoveEffect(cData.id, effect.tokenID, effect.effectId)} className={styles["causality-effect-delete"]} src={fire} alt="Delete Causality" />
+                          <img onClick={() => handleRemoveEffect(cData.id, effect.tokenId, effect.effectId)} className={styles["causality-effect-delete"]} src={fire} alt="Delete Causality" />
                           <div className={styles["causality-effect-info"]}>
                             <img className={styles["causality-effect-image"]} src={effect?.imageUrl} alt={effect?.name} />
                             <p className={styles["causality-effect-name"]}>{effect?.name} <span>will:</span></p>
@@ -111,15 +115,16 @@ export const Causalities = memo(() => {
                             <select
                               name="effect-actions"
                               onChange={(event) => {
-                                updateEffectTokenData(cData.id, effect.tokenID, effect.effectId, "action", event.target.value as EffectAction)
+                                updateEffectTokenData(cData.id, effect.tokenId, effect.effectId, "action", event.target.value as EffectAction)
                               }}
                               value={effect.action || ""}
+                              disabled={cData.cause?.status === "Complete" ? true : false}
                             >
                               <option value="">-- Please choose an option --</option>
                               <option value="lock">Lock</option>
                               <option value="unlock">Unlock</option>
                               <option value="appear">Appear</option>
-                              <option value="dissappear">Disappear</option>
+                              <option value="disappear">Disappear</option>
                             </select>
                           </div>
                         </motion.div>

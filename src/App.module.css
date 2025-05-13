@@ -2,13 +2,29 @@
   padding: 0.5rem 1rem;
 }
 
+.app-header-area {
+  position: relative;
+  margin-block-end: 1.5rem;
+}
+
 .app-header {
   display: flex;
-  align-items: center;
+  justify-content: center;
+  letter-spacing: 4px;
+}
+
+.app-header-area p {
+  position: absolute;
+  top: 52px;
+  left: 188px;
+  font-size: 18px;
+  font-weight: 100;
+  z-index: 1;
+  color: #b9f;
 }
 
 .app-header-icon {
   width: 70px;
-  margin-right: 0.25rem;
-  margin-bottom: -7px;
+  margin-top: -3px;
+  margin-left: 0.5rem;
 }

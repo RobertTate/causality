@@ -4,24 +4,25 @@ import { Image } from "@owlbear-rodeo/sdk";
 
 export type Role = "GM" | "PLAYER" | undefined;
 
-export type CauseTrigger = "collision" | "appears" | "disappears";
-export type EffectAction = "lock" | "unlock" | "appear" | "disappear"
-export type CausalityStatus = "pending" | "complete";
+export type CauseTrigger = "collision" | "appears" | "disappears" | "";
+export type EffectAction = "lock" | "unlock" | "appear" | "disappear" | ""
+export type CausalityStatus = "Pending" | "Complete";
 
 export type TokenData = {
-  tokenID: string;
+  tokenId: string;
+  causalityId: string;
   name: string;
   label: string;
   imageUrl: string;
 }
 
 export type CauseTokenData = TokenData & {
-  trigger?: CauseTrigger;
+  trigger: CauseTrigger;
   status: CausalityStatus;
 }
 
 export type EffectTokenData = TokenData & {
-  action?: EffectAction;
+  action: EffectAction;
   effectId: string;
 }
 
@@ -34,6 +35,7 @@ export type CausalityData = {
 export type CausalityTokenMetaData = {
   [ID]: {
     isCausalityToken: boolean;
+    isCollided: boolean;
     causalities?: CausalityData[];
   }
 }
@@ -42,8 +44,13 @@ export type CausalityToken = Image & {
   metadata: Image["metadata"] & CausalityTokenMetaData
 }
 
+export type CollisionToken = CausalityToken & {
+  isCollisionUpdateUnderway?: boolean;
+}
+
 export type AppContextProps = {
   tokens: CausalityToken[];
+  collisionTokensRef: React.RefObject<CollisionToken[]>;
 }
 
 export type AppProviderProps = {
