@@ -1,13 +1,13 @@
 import { useEffect, useState, useRef } from "react";
 import OBR from "@owlbear-rodeo/sdk";
 import { AppContext } from "./AppContext";
-import type { AppContextProps, AppProviderProps, CollisionToken, CausalityToken, CausalityTokenMetaData } from "./types";
+import type { AppContextProps, AppProviderProps, CausalityToken, CausalityTokenMetaData } from "./types";
 import { ID } from "./constants";
 import { triggerEffectTokens } from "./functions";
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<CausalityToken[]>([]);
-  const collisionTokensRef = useRef<CollisionToken[]>([]);
+  const collisionTokensRef = useRef<CausalityToken[]>([]);
 
   useEffect(() => {
     const onItemsChange = () => {
@@ -19,14 +19,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
             return true;
           }
         }) as CausalityToken[];
-
         let collisionTokens: CausalityToken[] = [];
-        for (const cToken of causalityTokens) {
+        for (let i=0; i < causalityTokens.length; i++) {
+          const cToken = causalityTokens[i];
           const itemMetadata = cToken.metadata as CausalityTokenMetaData;
           const causalityMetaData = itemMetadata[ID];
           const causalities = causalityMetaData.causalities;
           if (causalities && causalities.length > 0) {
-            for (const causality of causalities) {
+            for (let k = 0; k < causalities.length; k++) {
+              const causality = causalities[k];
               const causeToken = causality.cause;
               if (causeToken) {
                 if (causeToken.trigger && causeToken.status === "Pending") {

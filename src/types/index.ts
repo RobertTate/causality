@@ -45,13 +45,9 @@ export type CausalityToken = Image & {
   metadata: Image["metadata"] & CausalityTokenMetaData
 }
 
-export type CollisionToken = CausalityToken & {
-  isCollisionUpdateUnderway?: boolean;
-}
-
 export type AppContextProps = {
   tokens: CausalityToken[];
-  collisionTokensRef: React.RefObject<CollisionToken[]>;
+  collisionTokensRef: React.RefObject<CausalityToken[]>;
 }
 
 export type AppProviderProps = {

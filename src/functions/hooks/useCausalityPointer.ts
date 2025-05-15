@@ -8,6 +8,8 @@ import { getImageBoundingBox, intersect } from "../boundingBox";
 export const useCausalityPointer = () => {
   const { collisionTokensRef } = useAppStore();
 
+  let underwayCollisions: { [key: string ]: boolean} = {};
+
   const checkForCollisions = (item: Item) => {
     const currentTarget = item as CausalityToken;
     if (currentTarget) {
@@ -18,8 +20,8 @@ export const useCausalityPointer = () => {
           const tokenWithCollisionDetection = getImageBoundingBox(cToken);
           if (tokenBeingDraggedBB && tokenWithCollisionDetection) {
             const collisionHasOccured = intersect(tokenBeingDraggedBB, tokenWithCollisionDetection);
-            if (collisionHasOccured && cToken.isCollisionUpdateUnderway !== true) {
-              cToken.isCollisionUpdateUnderway = true;
+            if (collisionHasOccured && !underwayCollisions[cToken.id]) {
+              underwayCollisions[cToken.id] = true;
               OBR.scene.items.updateItems(((item) => {
                 return item.id === cToken.id;
               }), (items) => {
@@ -129,6 +131,7 @@ export const useCausalityPointer = () => {
               });
               stop();
               interaction = "";
+              underwayCollisions = {};
             }
           }
         },
