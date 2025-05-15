@@ -11,7 +11,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   useEffect(() => {
     const onItemsChange = () => {
-      OBR.scene.items.onChange((items) => {
+      OBR.scene.items.onChange(async (items) => {
         const causalityTokens = items.filter((item) => {
           const itemMetadata = item.metadata as CausalityTokenMetaData;
           const causalityMetaData = itemMetadata[ID];
@@ -21,31 +21,31 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         }) as CausalityToken[];
 
         let collisionTokens: CausalityToken[] = [];
-        causalityTokens.forEach((cToken) => {
+        for (const cToken of causalityTokens) {
           const itemMetadata = cToken.metadata as CausalityTokenMetaData;
           const causalityMetaData = itemMetadata[ID];
           const causalities = causalityMetaData.causalities;
           if (causalities && causalities.length > 0) {
-            causalities.forEach((causality) => {
+            for (const causality of causalities) {
               const causeToken = causality.cause;
               if (causeToken) {
                 if (causeToken.trigger && causeToken.status === "Pending") {
                   switch (causeToken.trigger) {
                     case "appears": {
                       if (cToken.visible === true) {
-                        triggerEffectTokens(causality.id);
+                        setTimeout(() => triggerEffectTokens(causality.id), Number(causeToken.delay));
                       }
                       break;
                     };
                     case "disappears": {
                       if (cToken.visible === false) {
-                        triggerEffectTokens(causality.id);
+                        setTimeout(() => triggerEffectTokens(causality.id), Number(causeToken.delay));
                       }
                       break;
                     };
                     case "collision": {
-                      if (causalityMetaData.isCollided) {
-                        triggerEffectTokens(causality.id);
+                      if (causeToken.isCollided) {
+                        setTimeout(() => triggerEffectTokens(causality.id), Number(causeToken.delay));
                       }
                       collisionTokens.push(cToken);
                       break;
@@ -53,10 +53,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                   }
                 }
               }
-            })
+            }
           }
-        })
-
+        }
         collisionTokensRef.current = collisionTokens;
         setTokens(causalityTokens);
       });

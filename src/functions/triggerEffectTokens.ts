@@ -26,9 +26,6 @@ export const triggerEffectTokens = (causalityID: string) => {
             const cause = causality.cause;
             if (cause) {
               cause.status = "Complete"
-              if (cause.trigger === "collision") {
-                causalityMetadata.isCollided = false;
-              }
             };
             const effects = causality.effects;
             if (effects && effects.length > 0) {

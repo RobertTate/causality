@@ -15,6 +15,7 @@ import type { CausalityData, CauseTrigger, EffectAction } from "../types";
 import { mergeWith, isArray } from "lodash";
 import fire from "../assets/fire.svg";
 import reset from "../assets/reset.svg";
+import timer from "../assets/timer.svg";
 
 export const Causalities = memo(() => {
   const { tokens } = useAppStore();
@@ -43,6 +44,7 @@ export const Causalities = memo(() => {
     const causalityDataArray = Object.values(causalities);
     return causalityDataArray.length > 0 ? causalityDataArray.map((cData) => {
       const effectsIDSet = new Set();
+
       return (
         <motion.div
           key={cData.id}
@@ -83,8 +85,8 @@ export const Causalities = memo(() => {
                   >
                     <option value="">-- Please choose an option --</option>
                     <option value="collision">Is Collided With</option>
-                    <option value="appears">Is Made Visible</option>
-                    <option value="disappears">Is Made Hidden</option>
+                    <option value="appears">Appears</option>
+                    <option value="disappears">Disappears</option>
                   </select>
                 </div>
               </div>
@@ -141,6 +143,39 @@ export const Causalities = memo(() => {
                 </motion.p>
               )}
             </Droppable>
+          </div>
+          <div className={styles["causality-footer-area"]}>
+            <div className={styles["causality-time-delay"]}>
+              <img className={styles["causality-time-delay-icon"]} src={timer} alt="time delay icon" />
+              <label className={styles["causality-time-delay-selection"]}>
+                <select
+                  name="time-delay"
+                  title='Set a time delay'
+                  onChange={(event) => {
+                    if (cData.cause) {
+                      return updateCauseTokenData(cData.id, cData.cause.tokenId, 'delay', event.target.value as CauseTrigger)
+                    }
+                  }}
+                  value={cData.cause?.delay}
+                  disabled={cData.cause?.status === "Complete" ? true : false}
+                >
+                  {[
+                    ["0", "0s"],
+                    ["500", "0.5s"],
+                    ["1000", "1s"],
+                    ["2000", "2s"],
+                    ["3000", "3s"],
+                    ["4000", "4s"],
+                    ["5000", "5s"]
+                  ].map((dItem) => {
+                    const [delay, delayDisplay] = dItem;
+                    return (
+                      <option key={delay} value={delay}>{delayDisplay}</option>
+                    )
+                  })}
+                </select>
+              </label>
+            </div>
           </div>
         </motion.div>
       )

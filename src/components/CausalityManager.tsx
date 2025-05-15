@@ -36,6 +36,8 @@ export const CausalityManager = () => {
           id: uniqueKey,
           cause: {
             status: "Pending",
+            delay: "0",
+            isCollided: false,
             tokenId: itemToUpdate.id,
             causalityId: uniqueKey,
             name: itemToUpdate.name,

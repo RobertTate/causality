@@ -16,26 +16,27 @@ export type TokenData = {
   imageUrl: string;
 }
 
-export type CauseTokenData = TokenData & {
+export type CauseData = TokenData & {
   trigger: CauseTrigger;
   status: CausalityStatus;
+  delay: string;
+  isCollided: boolean;
 }
 
-export type EffectTokenData = TokenData & {
+export type EffectData = TokenData & {
   action: EffectAction;
   effectId: string;
 }
 
 export type CausalityData = {
   id: string;
-  cause?: CauseTokenData;
-  effects?: EffectTokenData[];
+  cause?: CauseData;
+  effects?: EffectData[];
 }
 
 export type CausalityTokenMetaData = {
   [ID]: {
     isCausalityToken: boolean;
-    isCollided: boolean;
     causalities?: CausalityData[];
   }
 }
@@ -77,6 +78,11 @@ export type DraggableProps = {
 }
 
 export type DroppableProps = { 
+  children: ReactElement | ReactElement[];
+  id: string;
+}
+
+export type SortableProps = { 
   children: ReactElement | ReactElement[];
   id: string;
 }

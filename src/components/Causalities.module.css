@@ -170,3 +170,24 @@
 .causality-effect-action-settings select {
   width: 100%;
 }
+
+.causality-footer-area {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 0.625rem;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.causality-time-delay {
+  display: flex;
+}
+
+.causality-time-delay-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.causality-time-delay-selection {
+  margin-left: 0.5rem;
+}

@@ -27,18 +27,12 @@ export const handleResetCausality = (cData: CausalityData) => {
             if (cause) {
               cause.status = "Pending"
               
-              if (cause.trigger === "collision") {
-                causalityMetaData.isCollided = false;
+              if (cause.isCollided) {
+                cause.isCollided = false;
               }
               
               cause.trigger = "";
             };
-            const effects = causality.effects;
-            if (effects && effects.length > 0) {
-              effects.forEach((effect) => {
-                effect.action = "";
-              });
-            }
           }
         })
       }

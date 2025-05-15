@@ -6,7 +6,7 @@ import { useAppStore } from "./useAppStore";
 import { getImageBoundingBox, intersect } from "../boundingBox";
 
 export const useCausalityPointer = () => {
-  const { collisionTokensRef } = useAppStore()
+  const { collisionTokensRef } = useAppStore();
 
   const checkForCollisions = (item: Item) => {
     const currentTarget = item as CausalityToken;
@@ -25,8 +25,16 @@ export const useCausalityPointer = () => {
               }), (items) => {
                 const itemToUpdate = items[0] as CausalityToken;
                 const itemMetaData = itemToUpdate.metadata[ID];
-                if (itemMetaData.isCollided === false) {
-                  itemMetaData.isCollided = true;
+                const causalities = itemMetaData.causalities;
+                if (causalities && causalities.length > 0) {
+                  for (let causality of causalities) {
+                    const cause = causality.cause;
+                    if (cause) {
+                      if (cause.isCollided === false) {
+                        cause.isCollided = true;
+                      }
+                    }
+                  }
                 }
               })
             }
@@ -37,6 +45,8 @@ export const useCausalityPointer = () => {
   }
 
   useEffect(() => {
+    let dragCount = 0;
+
     OBR.onReady(() => {
       let interaction: InteractionManager<Item> | string = "";
       OBR.tool.createMode({
@@ -82,10 +92,22 @@ export const useCausalityPointer = () => {
           if (interaction) {
             if (typeof interaction !== "string") {
               const [update] = interaction;
-              update((item) => {
+              const itemToUpdate = update((item) => {
                 item.position = ev.pointerPosition;
                 checkForCollisions(item);
               });
+              dragCount++;
+              if (dragCount % 20 === 0) {
+                await OBR.scene.items.updateItems((item) => {
+                  return item.id === itemToUpdate.id;
+                }, (items) => {
+                  for (let item of items) {
+                    if (item.id === itemToUpdate.id) {
+                      item.position = itemToUpdate.position;
+                    }
+                  }
+                });
+              }
             }
           }
         },
@@ -96,13 +118,6 @@ export const useCausalityPointer = () => {
               const itemToUpdate = update((item) => {
                 item.position = ev.pointerPosition;
               });
-              await OBR.scene.local.updateItems((item) => {
-                return item.type === "LIGHT"
-              }, (items) => {
-                for (let item of items) {
-                  item.visible = false;
-                }
-              });
               await OBR.scene.items.updateItems((item) => {
                 return item.id === itemToUpdate.id;
               }, (items) => {
@@ -110,13 +125,6 @@ export const useCausalityPointer = () => {
                   if (item.id === itemToUpdate.id) {
                     item.position = itemToUpdate.position;
                   }
-                }
-              });
-              await OBR.scene.local.updateItems((item) => {
-                return item.type === "LIGHT"
-              }, (items) => {
-                for (let item of items) {
-                  item.visible = true;
                 }
               });
               stop();
