@@ -7,7 +7,7 @@
   margin-bottom: 0.25rem;
   border-radius: 10px;
   background-color: #555555;
-  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2)
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2);
 }
 
 .token:active {

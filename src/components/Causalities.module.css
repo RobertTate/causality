@@ -57,7 +57,8 @@
   color: #47d461;
 }
 
-.causality-delete, .causality-reset {
+.causality-delete,
+.causality-reset {
   margin-top: 0.125rem;
   width: 20px;
   height: 20px;
@@ -78,7 +79,7 @@
   padding: 0.5rem;
   border-radius: 10px;
   background-color: #555555;
-  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2)
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2);
 }
 
 .causality-cause-when {

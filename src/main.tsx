@@ -1,12 +1,13 @@
-import { createRoot } from 'react-dom/client';
-import './index.css';
-import App from './App.tsx';
-import { GlobalEffectDialog } from './components/GlobalEffectDialog.tsx';
-import { AppProvider } from "./AppProvider.tsx";
+import { createRoot } from "react-dom/client";
 
-createRoot(document.getElementById('root')!).render(
+import App from "./App.tsx";
+import { AppProvider } from "./AppProvider.tsx";
+import { GlobalEffectDialog } from "./components/GlobalEffectDialog.tsx";
+import "./index.css";
+
+createRoot(document.getElementById("root")!).render(
   <AppProvider>
     <App />
     <GlobalEffectDialog />
-  </AppProvider>
-)
+  </AppProvider>,
+);

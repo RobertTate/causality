@@ -1,24 +1,31 @@
-import { useEffect, useState, useRef, useCallback } from "react";
 import OBR from "@owlbear-rodeo/sdk";
+import { useCallback, useEffect, useRef, useState } from "react";
+
 import { AppContext } from "./AppContext";
-import type { AppContextProps, AppProviderProps, CausalityToken, CausalityTokenMetaData, EffectDialogConfig } from "./types";
 import { ID } from "./constants";
 import { triggerEffectTokens } from "./functions";
+import type {
+  AppContextProps,
+  AppProviderProps,
+  CausalityToken,
+  CausalityTokenMetaData,
+  EffectDialogConfig,
+} from "./types";
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<CausalityToken[]>([]);
   const collisionTokensRef = useRef<CausalityToken[]>([]);
   const [effectDialog, setEffectDialog] = useState<EffectDialogConfig>({
-    open: false
+    open: false,
   });
 
   const updateEffectDialog = useCallback((effectDialog: EffectDialogConfig) => {
     setEffectDialog((prev) => {
       return {
         ...prev,
-        ...effectDialog
-      }
-    })
+        ...effectDialog,
+      };
+    });
   }, []);
 
   useEffect(() => {
@@ -27,12 +34,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         const causalityTokens = items.filter((item) => {
           const itemMetadata = item.metadata as CausalityTokenMetaData;
           const causalityMetaData = itemMetadata[ID];
-          if (causalityMetaData && "isCausalityToken" in causalityMetaData && causalityMetaData.isCausalityToken === true) {
+          if (
+            causalityMetaData &&
+            "isCausalityToken" in causalityMetaData &&
+            causalityMetaData.isCausalityToken === true
+          ) {
             return true;
           }
         }) as CausalityToken[];
         let collisionTokens: CausalityToken[] = [];
-        for (let i=0; i < causalityTokens.length; i++) {
+        for (let i = 0; i < causalityTokens.length; i++) {
           const cToken = causalityTokens[i];
           const itemMetadata = cToken.metadata as CausalityTokenMetaData;
           const causalityMetaData = itemMetadata[ID];
@@ -46,23 +57,32 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                   switch (causeToken.trigger) {
                     case "appears": {
                       if (cToken.visible === true) {
-                        setTimeout(() => triggerEffectTokens(causality.id), Number(causeToken.delay));
+                        setTimeout(
+                          () => triggerEffectTokens(causality.id),
+                          Number(causeToken.delay),
+                        );
                       }
                       break;
-                    };
+                    }
                     case "disappears": {
                       if (cToken.visible === false) {
-                        setTimeout(() => triggerEffectTokens(causality.id), Number(causeToken.delay));
+                        setTimeout(
+                          () => triggerEffectTokens(causality.id),
+                          Number(causeToken.delay),
+                        );
                       }
                       break;
-                    };
+                    }
                     case "collision": {
                       if (causeToken.isCollided) {
-                        setTimeout(() => triggerEffectTokens(causality.id), Number(causeToken.delay));
+                        setTimeout(
+                          () => triggerEffectTokens(causality.id),
+                          Number(causeToken.delay),
+                        );
                       }
                       collisionTokens.push(cToken);
                       break;
-                    };
+                    }
                   }
                 }
               }
@@ -72,7 +92,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         collisionTokensRef.current = collisionTokens;
         setTokens(causalityTokens);
       });
-    }
+    };
 
     OBR.onReady(() => {
       onItemsChange();

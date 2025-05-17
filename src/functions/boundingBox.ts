@@ -1,10 +1,9 @@
-
 import {
-  buildShape,
+  BoundingBox,
   Image,
   Math2,
   Shape,
-  BoundingBox,
+  buildShape,
 } from "@owlbear-rodeo/sdk";
 
 interface Rectangle extends Shape {
@@ -14,7 +13,6 @@ interface Rectangle extends Shape {
 function deg2rad(degree: number) {
   return (degree / 180) * Math.PI;
 }
-
 
 function isRectangle(shape: Shape): shape is Rectangle {
   return shape.shapeType === "RECTANGLE";
@@ -93,9 +91,9 @@ export function getImageBoundingBox(image: Image) {
 
 export function intersect(a: BoundingBox, b: BoundingBox): boolean {
   return !(
-    a.max.x < b.min.x ||    // a is completely left  of b
-    a.min.x > b.max.x ||    // a is completely right of b
-    a.max.y < b.min.y ||    // a is completely above b
-    a.min.y > b.max.y       // a is completely below b
+    a.max.x < b.min.x || // a is completely left  of b
+    a.min.x > b.max.x || // a is completely right of b
+    a.max.y < b.min.y || // a is completely above b
+    a.min.y > b.max.y // a is completely below b
   );
 }

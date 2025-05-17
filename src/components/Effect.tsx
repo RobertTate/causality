@@ -1,12 +1,11 @@
-import { motion } from "motion/react"
-import type { EffectProps } from "../types";
-import {
-  handleRemoveEffect,
-} from "../functions";
-import styles from "./Effect.module.css";
-import fire from "../assets/fire.svg";
-import { useAppStore } from "../functions/hooks";
+import { motion } from "motion/react";
 import { useEffect } from "react";
+
+import fire from "../assets/fire.svg";
+import { handleRemoveEffect } from "../functions";
+import { useAppStore } from "../functions/hooks";
+import type { EffectProps } from "../types";
+import styles from "./Effect.module.css";
 
 export const Effect = ({ cData, effect }: EffectProps) => {
   const { effectDialog, updateEffectDialog } = useAppStore();
@@ -19,8 +18,8 @@ export const Effect = ({ cData, effect }: EffectProps) => {
       updateEffectDialog({
         open: true,
         cData,
-        effect
-      })
+        effect,
+      });
     }
   }, [cData, activeEffectId]);
 
@@ -29,9 +28,9 @@ export const Effect = ({ cData, effect }: EffectProps) => {
       open: true,
       cData,
       effect,
-      activeEffectId: effect.effectId
-    })
-  }
+      activeEffectId: effect.effectId,
+    });
+  };
 
   return (
     <motion.div
@@ -43,10 +42,21 @@ export const Effect = ({ cData, effect }: EffectProps) => {
       transition={{ duration: 0.25 }}
       layout="position"
     >
-      <img onClick={() => handleRemoveEffect(cData.id, effect.tokenId, effect.effectId)} className={styles["effect-delete"]} src={fire} alt="Delete Causality" />
+      <img
+        onClick={() =>
+          handleRemoveEffect(cData.id, effect.tokenId, effect.effectId)
+        }
+        className={styles["effect-delete"]}
+        src={fire}
+        alt="Delete Causality"
+      />
 
       <div className={styles["effect-info"]}>
-        <img className={styles["effect-image"]} src={effect?.imageUrl} alt={effect?.name} />
+        <img
+          className={styles["effect-image"]}
+          src={effect?.imageUrl}
+          alt={effect?.name}
+        />
         <div className={styles["effect-token-text-area"]}>
           <p className={styles["effect-name"]}>{effect?.name}</p>
           <p>{effect?.label}</p>
@@ -54,7 +64,9 @@ export const Effect = ({ cData, effect }: EffectProps) => {
       </div>
 
       {effect.action && (
-        <p className={styles["effect-action-choice"]}>...will {effect.action}</p>
+        <p className={styles["effect-action-choice"]}>
+          ...will {effect.action}
+        </p>
       )}
 
       <button
@@ -66,5 +78,5 @@ export const Effect = ({ cData, effect }: EffectProps) => {
         Edit
       </button>
     </motion.div>
-  )
-}
+  );
+};

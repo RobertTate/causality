@@ -1,7 +1,8 @@
-import { useEffect } from "react";
 import OBR, { isImage } from "@owlbear-rodeo/sdk";
-import type { CausalityToken } from "../../types";
+import { useEffect } from "react";
+
 import { ID } from "../../constants";
+import type { CausalityToken } from "../../types";
 
 export const useCausalityTokenSetterMenuContext = () => {
   useEffect(() => {
@@ -15,7 +16,14 @@ export const useCausalityTokenSetterMenuContext = () => {
             filter: {
               every: [
                 { key: "type", value: "IMAGE" },
-                { key: ["metadata", "com.roberttate.causality", "isCausalityToken"], value: true}
+                {
+                  key: [
+                    "metadata",
+                    "com.roberttate.causality",
+                    "isCausalityToken",
+                  ],
+                  value: true,
+                },
               ],
             },
           },
@@ -23,35 +31,35 @@ export const useCausalityTokenSetterMenuContext = () => {
             icon: "/icon.svg",
             label: "Add To Causality",
             filter: {
-              every: [
-                { key: "type", value: "IMAGE" },
-              ],
+              every: [{ key: "type", value: "IMAGE" }],
             },
-          }
+          },
         ],
         onClick: async (context) => {
           if (isImage(context?.items?.[0])) {
             await OBR.scene.items.updateItems(context?.items, (images) => {
               for (let image of images) {
                 const selectedItem = image as CausalityToken;
-                if (selectedItem?.metadata?.[ID]?.["isCausalityToken"] === true) {
+                if (
+                  selectedItem?.metadata?.[ID]?.["isCausalityToken"] === true
+                ) {
                   selectedItem.metadata[ID]["isCausalityToken"] = false;
                 } else {
                   selectedItem.metadata[ID] = {
                     isCausalityToken: true,
-                  }
+                  };
                 }
               }
-            })
+            });
             await OBR.player.deselect();
             await OBR.action.open();
           }
         },
       });
-    }
+    };
 
     OBR.onReady(() => {
       setupContextMenu();
     });
-  }, [])
-}
+  }, []);
+};

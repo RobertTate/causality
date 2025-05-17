@@ -1,10 +1,14 @@
 import OBR from "@owlbear-rodeo/sdk";
 import { useEffect, useState } from "react";
-import { CausalityManager } from "./components/CausalityManager";
-import { useCausalityPointer, useCausalityTokenSetterMenuContext } from "./functions/hooks";
-import type { Role } from "./types";
-import icon from "./assets/icon.svg";
+
 import styles from "./App.module.css";
+import icon from "./assets/icon.svg";
+import { CausalityManager } from "./components/CausalityManager";
+import {
+  useCausalityPointer,
+  useCausalityTokenSetterMenuContext,
+} from "./functions/hooks";
+import type { Role } from "./types";
 
 function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -45,12 +49,10 @@ function App() {
           <CausalityManager />
         </>
       ) : (
-        <>
-          Not for you! Go away.
-        </>
+        <>Not for you! Go away.</>
       )}
     </main>
-  )
-};
+  );
+}
 
 export default App;

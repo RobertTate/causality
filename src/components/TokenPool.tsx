@@ -1,8 +1,7 @@
-
-import styles from "./TokenPool.module.css";
 import { useAppStore } from "../functions/hooks";
-import { Draggable } from "./dnd/Draggable";
 import { Token } from "./Token";
+import styles from "./TokenPool.module.css";
+import { Draggable } from "./dnd/Draggable";
 
 export const TokenPool = () => {
   const { tokens } = useAppStore();
@@ -10,16 +9,21 @@ export const TokenPool = () => {
   const populateTokenPool = () => {
     if (tokens.length === 0) {
       return (
-        <p><em>Right click a token on the map and select "Add To Causality" to add it to your token pool.</em></p>
-      )
+        <p>
+          <em>
+            Right click a token on the map and select "Add To Causality" to add
+            it to your token pool.
+          </em>
+        </p>
+      );
     }
 
-    return tokens.map(token => (
+    return tokens.map((token) => (
       <Draggable key={token.id} id={token.id} token={token}>
         <Token token={token} />
       </Draggable>
-    ))
-  }
+    ));
+  };
 
   return (
     <section className={styles["tokenpool-section"]}>
@@ -30,5 +34,5 @@ export const TokenPool = () => {
         </div>
       </div>
     </section>
-  )
-}
+  );
+};

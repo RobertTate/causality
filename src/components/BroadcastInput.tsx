@@ -1,8 +1,9 @@
-import { useState, useMemo } from "react";
-import styles from "./BroadcastInput.module.css";
-import type { BroadCast, BroadcastInputProps, Destination } from "../types";
-import { updateEffectTokenData } from "../functions";
 import debounce from "lodash/debounce";
+import { useMemo, useState } from "react";
+
+import { updateEffectTokenData } from "../functions";
+import type { BroadCast, BroadcastInputProps, Destination } from "../types";
+import styles from "./BroadcastInput.module.css";
 
 export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
   const [channel, setChannel] = useState("");
@@ -10,25 +11,45 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
   const [dataError, setDataError] = useState<string | null>(null);
   const [destination, setDestination] = useState<Destination | null>(null);
 
-  const debouncedUpdateChannel = useMemo(() => debounce((newValue: string) => {
-    console.log('update')
-    updateEffectTokenData(cData.id, effect.tokenId, effect.effectId, "broadcast", {
-      channel: newValue
-    } as BroadCast)
-  }, 500), [cData.id, effect.tokenId, effect.effectId]);
+  const debouncedUpdateChannel = useMemo(
+    () =>
+      debounce((newValue: string) => {
+        console.log("update");
+        updateEffectTokenData(
+          cData.id,
+          effect.tokenId,
+          effect.effectId,
+          "broadcast",
+          {
+            channel: newValue,
+          } as BroadCast,
+        );
+      }, 500),
+    [cData.id, effect.tokenId, effect.effectId],
+  );
 
   const handleChannelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
     setChannel(newValue);
     debouncedUpdateChannel(newValue);
-  }
+  };
 
-  const debouncedUpdateData = useMemo(() => debounce((newValue: string) => {
-    console.log('update json')
-    updateEffectTokenData(cData.id, effect.tokenId, effect.effectId, "broadcast", {
-      data: newValue
-    } as BroadCast)
-  }, 500), [cData.id, effect.tokenId, effect.effectId]);
+  const debouncedUpdateData = useMemo(
+    () =>
+      debounce((newValue: string) => {
+        console.log("update json");
+        updateEffectTokenData(
+          cData.id,
+          effect.tokenId,
+          effect.effectId,
+          "broadcast",
+          {
+            data: newValue,
+          } as BroadCast,
+        );
+      }, 500),
+    [cData.id, effect.tokenId, effect.effectId],
+  );
 
   const handleDataChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newValue = e.target.value;
@@ -45,15 +66,30 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
   const handleDestinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value as Destination;
     setDestination(newValue);
-    console.log("update")
-    updateEffectTokenData(cData.id, effect.tokenId, effect.effectId, "broadcast", {
-      destination: newValue
-    } as BroadCast)
-  }
+    console.log("update");
+    updateEffectTokenData(
+      cData.id,
+      effect.tokenId,
+      effect.effectId,
+      "broadcast",
+      {
+        destination: newValue,
+      } as BroadCast,
+    );
+  };
 
   return (
     <>
-      <p className={styles["broadcast-disclaimer"]}>See the <a target="_blank" href="https://docs.owlbear.rodeo/extensions/apis/broadcast/">Broadcast API DOCS</a> for more info.</p>
+      <p className={styles["broadcast-disclaimer"]}>
+        See the{" "}
+        <a
+          target="_blank"
+          href="https://docs.owlbear.rodeo/extensions/apis/broadcast/"
+        >
+          Broadcast API DOCS
+        </a>{" "}
+        for more info.
+      </p>
       <div className={styles["broadcast-input-channel-display"]}>
         <p>Channel:</p>
         <input
@@ -67,8 +103,8 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
       <div className={styles["broadcast-input-json-container"]}>
         <p>Data:</p>
         <textarea
-          value={dataValue || effect?.broadcast?.data as string}
-          placeholder={"{\n  \"key\": \"value\"\n}"}
+          value={dataValue || (effect?.broadcast?.data as string)}
+          placeholder={'{\n  "key": "value"\n}'}
           onChange={handleDataChange}
           rows={6}
           style={{
@@ -78,7 +114,13 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
             fontSize: "12px",
           }}
         />
-        {dataError ? <p style={{ color: "red", fontSize: "12px" }}>Invalid JSON: {dataError}</p> : <p style={{ color: "green", fontSize: "12px" }}>✔</p>}
+        {dataError ? (
+          <p style={{ color: "red", fontSize: "12px" }}>
+            Invalid JSON: {dataError}
+          </p>
+        ) : (
+          <p style={{ color: "green", fontSize: "12px" }}>✔</p>
+        )}
       </div>
       <div className={styles["broadcast-input-destination-display"]}>
         <p>Destination:</p>
@@ -92,7 +134,6 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
           <option value="ALL">All</option>
         </select>
       </div>
-
     </>
   );
-}
+};
