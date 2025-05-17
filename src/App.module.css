@@ -17,13 +17,13 @@
   position: absolute;
   top: 52px;
   left: 188px;
+  color: #b9f;
   font-size: 18px;
   font-weight: 100;
-  color: #b9f;
 }
 
 .app-header-icon {
-  width: 70px;
   margin-top: -3px;
   margin-left: 0.5rem;
+  width: 70px;
 }
