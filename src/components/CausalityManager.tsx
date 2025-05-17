@@ -42,6 +42,7 @@ export const CausalityManager = () => {
 
           itemToUpdate.metadata[ID].causalities.unshift({
             id: uniqueKey,
+            timestamp: new Date().toISOString(),
             cause: {
               status: "Pending",
               delay: "0",
@@ -93,6 +94,7 @@ export const CausalityManager = () => {
           } else {
             itemToUpdate.metadata[ID].causalities.push({
               id: causalityId,
+              timestamp: new Date().toISOString(),
               effects: [
                 {
                   tokenId: itemToUpdate.id,

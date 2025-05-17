@@ -47,7 +47,9 @@ export const Causalities = memo(() => {
 
     const causalityDataArray = Object.values(causalities);
     return causalityDataArray.length > 0 ? (
-      causalityDataArray.map((cData) => {
+      causalityDataArray.sort((a, b) => {
+        return new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1;
+      }).map((cData) => {
         const effectsIDSet = new Set();
 
         return (

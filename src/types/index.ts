@@ -46,6 +46,7 @@ export type EffectData = TokenData & {
 
 export type CausalityData = {
   id: string;
+  timestamp: string;
   cause?: CauseData;
   effects?: EffectData[];
 };
