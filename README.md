@@ -1,54 +1,49 @@
-# React + TypeScript + Vite
+# Causality
+### An an [Owlbear Rodeo](https://www.owlbear.rodeo/) extension for automating what happens next.
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Causality allows the GM of a room to orchestrate **cause** and **effect** relationships between tokens interacting on the map.
 
-Currently, two official plugins are available:
+<img src="./docs/ShortCausalityDemo.gif" alt="Short Causality Demo" width="722">
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## How to use:
 
-## Expanding the ESLint configuration
+### Step 1:
+**Add tokens to Causality.**
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+<img src="./docs/Step1AddTokens.gif" alt="Short Causality Demo" width="722">
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
+### Step 2:
+**Set a token as a "Cause"**
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+<img src="./docs/Step2AddCause.gif" alt="Short Causality Demo" width="722">
 
-```js
-// eslint.config.js
-import reactDom from "eslint-plugin-react-dom";
-import reactX from "eslint-plugin-react-x";
+### Step 3:
+**Pair one or more tokens as an "Effect" to that "Cause"**
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    "react-x": reactX,
-    "react-dom": reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs["recommended-typescript"].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-});
-```
+<img src="./docs/Step3AddEffects.gif" alt="Short Causality Demo" width="722">
+
+### Step 4:
+**Trigger the "Causality" - or chain more together!**
+
+<img src="./docs/Step4TriggerOrChain.gif" alt="Short Causality Demo" width="722">
+
+
+### Step 5:
+**Trigger the causality (or causalities). Reset them to start over.**
+
+
+<img src="./docs/Step5Trigger.gif" alt="Short Causality Demo" width="722">
+
+
+**IMPORTANT**: You MUST be using the **Causality Move Tool** in order for collisions to trigger.
+
+<img src="./docs/CausalityMoveTool.png" alt="Short Causality Demo" width="175">
+
+<br />
+<br />
+
+> ⚡⚡⚡⚡
+> 
+> Thanks for checking out **Causality**! I literally just made this because I wanted a way for hidden traps to appear automatically if one of my players moved their token into it. Now we have this. 🙃
+>
+> ⚡⚡⚡⚡
