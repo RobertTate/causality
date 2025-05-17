@@ -33,7 +33,7 @@
   margin: 0.5rem 0;
   border-radius: 10px;
   background-color: #4c396e;
-  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2)
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.2);
 }
 
 .causality-title-area {
@@ -112,63 +112,7 @@
 
 .causality-cause-trigger-settings select {
   width: 100%;
-}
-
-.causality-effect {
-  display: flex;
-  position: relative;
-  flex-direction: column;
-  justify-content: flex-start;
-  align-items: flex-start;
-  margin-bottom: 0.5rem;
-  padding: 0.5rem;
-  border-radius: 10px;
-  background-color: #4c396e;
-  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4)
-}
-
-.causality-effect-delete {
-  position: absolute;
-  top: 3px;
-  right: 0px;
-  width: 17px;
-  height: 17px;
   cursor: pointer;
-}
-
-.causality-effect:last-child {
-  margin-bottom: 0;
-}
-
-.causality-effect-info {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-.causality-effect-image {
-  width: 50px;
-  height: 50px;
-  margin-right: 0.5rem;
-}
-
-.causality-effect-name {
-  font-size: 16px;
-  font-weight: 600;
-}
-
-.causality-effect-name span {
-  font-weight: 400;
-}
-
-.causality-effect-action-settings {
-  align-self: center;
-  width: 100%;
-}
-
-.causality-effect-action-settings select {
-  width: 100%;
 }
 
 .causality-footer-area {

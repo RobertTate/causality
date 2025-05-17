@@ -1,13 +1,25 @@
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import OBR from "@owlbear-rodeo/sdk";
 import { AppContext } from "./AppContext";
-import type { AppContextProps, AppProviderProps, CausalityToken, CausalityTokenMetaData } from "./types";
+import type { AppContextProps, AppProviderProps, CausalityToken, CausalityTokenMetaData, EffectDialogConfig } from "./types";
 import { ID } from "./constants";
 import { triggerEffectTokens } from "./functions";
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [tokens, setTokens] = useState<CausalityToken[]>([]);
   const collisionTokensRef = useRef<CausalityToken[]>([]);
+  const [effectDialog, setEffectDialog] = useState<EffectDialogConfig>({
+    open: false
+  });
+
+  const updateEffectDialog = useCallback((effectDialog: EffectDialogConfig) => {
+    setEffectDialog((prev) => {
+      return {
+        ...prev,
+        ...effectDialog
+      }
+    })
+  }, []);
 
   useEffect(() => {
     const onItemsChange = () => {
@@ -70,6 +82,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const store: AppContextProps = {
     tokens,
     collisionTokensRef,
+    effectDialog,
+    updateEffectDialog,
   };
 
   return <AppContext.Provider value={store}>{children}</AppContext.Provider>;

@@ -7,15 +7,14 @@ import { useAppStore } from "../functions/hooks";
 import {
   handleRemoveCausality,
   handleResetCausality,
-  handleRemoveEffect,
   updateCauseTokenData,
-  updateEffectTokenData
 } from "../functions";
-import type { CausalityData, CauseTrigger, EffectAction } from "../types";
+import type { CausalityData, CauseTrigger } from "../types";
 import { mergeWith, isArray } from "lodash";
 import fire from "../assets/fire.svg";
 import reset from "../assets/reset.svg";
 import timer from "../assets/timer.svg";
+import { Effect } from "./Effect";
 
 export const Causalities = memo(() => {
   const { tokens } = useAppStore();
@@ -84,7 +83,7 @@ export const Causalities = memo(() => {
                     disabled={cData.cause?.status === "Complete" ? true : false}
                   >
                     <option value="">-- Please choose an option --</option>
-                    <option value="collision">Is Collided With</option>
+                    <option value="collision">Is Collided Into</option>
                     <option value="appears">Appears</option>
                     <option value="disappears">Disappears</option>
                   </select>
@@ -98,39 +97,7 @@ export const Causalities = memo(() => {
                   {cData.effects.map((effect) => {
                     if (!effectsIDSet.has(effect.effectId)) {
                       effectsIDSet.add(effect.effectId);
-                      return (
-                        <motion.div
-                          key={effect.effectId}
-                          className={styles["causality-effect"]}
-                          initial={{ opacity: 0, y: -10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          exit={{ opacity: 0, y: 10 }}
-                          transition={{ duration: 0.25 }}
-                          layout="position"
-                        >
-                          <img onClick={() => handleRemoveEffect(cData.id, effect.tokenId, effect.effectId)} className={styles["causality-effect-delete"]} src={fire} alt="Delete Causality" />
-                          <div className={styles["causality-effect-info"]}>
-                            <img className={styles["causality-effect-image"]} src={effect?.imageUrl} alt={effect?.name} />
-                            <p className={styles["causality-effect-name"]}>{effect?.name} <span>will:</span></p>
-                          </div>
-                          <div className={styles["causality-effect-action-settings"]}>
-                            <select
-                              name="effect-actions"
-                              onChange={(event) => {
-                                updateEffectTokenData(cData.id, effect.tokenId, effect.effectId, "action", event.target.value as EffectAction)
-                              }}
-                              value={effect.action || ""}
-                              disabled={cData.cause?.status === "Complete" ? true : false}
-                            >
-                              <option value="">-- Please choose an option --</option>
-                              <option value="lock">Lock</option>
-                              <option value="unlock">Unlock</option>
-                              <option value="appear">Appear</option>
-                              <option value="disappear">Disappear</option>
-                            </select>
-                          </div>
-                        </motion.div>
-                      )
+                      return <Effect key={effect.effectId} cData={cData} effect={effect} />
                     }
                   })}
                 </>

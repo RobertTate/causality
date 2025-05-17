@@ -1,0 +1,22 @@
+.broadcast-disclaimer {
+  font-size: 12px;
+}
+
+.broadcast-input-channel-display {
+  margin-top: 0.5rem;
+}
+
+.broadcast-input-channel-display input {
+  border: 1px solid #888888;
+  width: 100%;
+}
+
+.broadcast-input-destination-display {
+  margin-top: 0.25rem;
+}
+
+.broadcast-input-destination-display select {
+  width: 100%;
+  cursor: pointer;
+  border: 1px solid #888888;
+}

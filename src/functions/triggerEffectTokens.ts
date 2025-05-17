@@ -47,6 +47,18 @@ export const triggerEffectTokens = (causalityID: string) => {
                     itemToUpdate.locked = false;
                     break;
                   }
+                  case "broadcast": {
+                    const channel = effect.broadcast?.channel;
+                    const data = effect.broadcast?.data as string;
+                    const parsedData = JSON.parse(data);
+                    const destination = effect.broadcast?.destination || "REMOTE";
+
+                    if (channel && parsedData && destination) {
+                      OBR.broadcast.sendMessage(channel, parsedData, { destination });
+                    }
+
+                    break;
+                  }
                 }
               })
             }

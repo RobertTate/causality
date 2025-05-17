@@ -1,12 +1,12 @@
 import OBR from '@owlbear-rodeo/sdk';
-import type { CauseTokenData, EffectTokenData, CausalityToken } from "../types";
+import type { CauseData, EffectData, CausalityToken, BroadCast } from "../types";
 import { ID } from "../constants";
 
-export const updateCauseTokenData = <K extends keyof CauseTokenData>(
+export const updateCauseTokenData = <K extends keyof CauseData>(
   causalityID: string,
   tokenID: string,
   propName: K,
-  propValue: CauseTokenData[K],
+  propValue: CauseData[K],
 ) => {
   OBR.scene.items.updateItems(((item) => {
     return item.id === tokenID;
@@ -27,12 +27,12 @@ export const updateCauseTokenData = <K extends keyof CauseTokenData>(
   })
 }
 
-export const updateEffectTokenData = <K extends keyof EffectTokenData>(
+export const updateEffectTokenData = <K extends keyof EffectData>(
   causalityID: string,
   tokenID: string,
   effectID: string,
   propName: K,
-  propValue: EffectTokenData[K],
+  propValue: EffectData[K],
 ) => {
   OBR.scene.items.updateItems(((item) => {
     return item.id === tokenID;
@@ -50,7 +50,15 @@ export const updateEffectTokenData = <K extends keyof EffectTokenData>(
             return effect.effectId === effectID;
           });
           if (matchingEffect) {
-            matchingEffect[propName] = propValue;
+            if (propName === "broadcast") {
+              const broadcastObj = propValue as BroadCast;
+              matchingEffect.broadcast = {
+                ...matchingEffect.broadcast,
+                ...broadcastObj
+              }
+            } else {
+              matchingEffect[propName] = propValue;
+            }
           }
         }
       }

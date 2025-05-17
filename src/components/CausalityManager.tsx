@@ -32,7 +32,7 @@ export const CausalityManager = () => {
           itemToUpdate.metadata[ID].causalities = [];
         };
 
-        itemToUpdate.metadata[ID].causalities.push({
+        itemToUpdate.metadata[ID].causalities.unshift({
           id: uniqueKey,
           cause: {
             status: "Pending",

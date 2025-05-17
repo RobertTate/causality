@@ -1,0 +1,168 @@
+.dialog-overlay {
+  position: fixed;
+  background-color: #ffffff4f;
+  inset: 0;
+}
+
+.dialog-overlay[data-state="open"] {
+  animation: overlayShow 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialog-overlay[data-state="closed"] {
+  animation: overlayHide 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialog-content {
+  background-color: #242424;
+  border: 1px solid #8447ff;
+  border-radius: 6px;
+  box-shadow: 5px 5px 4px 2px #2c125f9a;
+  position: fixed;
+  top: 50%;
+  left: 49.8%;
+  transform: translate(-50%, -50%);
+  width: 95vw;
+  max-width: 600px;
+  max-height: 85vh;
+  padding: 25px;
+  animation: contentShow 150ms cubic-bezier(0.16, 1, 0.3, 1);
+
+  &:focus {
+    outline: none;
+  }
+}
+
+.dialog-content[data-state="open"] {
+  animation: contentShow 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialog-content[data-state="closed"] {
+  animation: contentHide 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.dialog-pre {
+  align-items: flex-end;
+  margin-bottom: 0.75rem;
+}
+
+.dialog-post {
+  margin-bottom: 0.75rem;
+  font-size: 18px;
+}
+
+.dialog-pre img {
+  width: 30px;
+  height: 30px;
+  margin-right: 0.2rem;
+  margin-bottom: -10px;
+}
+
+.dialog-title {
+  display: flex;
+  margin-bottom: 0.5rem;
+}
+
+.dialog-close-button {
+  all: unset;
+  height: 25px;
+  width: 25px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  border: 1px solid transparent;
+
+  &:focus {
+		border: 1px solid white;
+    border-radius: 50%;
+	}
+}
+
+.dialog-effect-confirm-button {
+  margin-top: 1rem;
+  padding: 0.5rem;
+  border: 1px solid #8447ff;
+  background-color: #4c396e;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+}
+
+.dialog-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.dialog-image {
+  width: 80px;
+  height: 80px;
+  margin-right: 0.5rem;
+}
+
+.dialog-name {
+  font-weight: 600;
+}
+
+.dialog-label {
+  font-weight: 200;
+  font-size: 16px;
+}
+
+.dialog-effect-action-settings {
+  align-self: center;
+  width: 100%;
+}
+
+.dialog-effect-action-settings select {
+  width: 100%;
+  font-size: 14px;
+  padding: 0.25rem 0;
+  border: 1px solid #888888;
+  cursor: pointer;
+}
+
+@keyframes overlayShow {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes overlayHide {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes contentShow {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes contentHide {
+  from {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: translate(-50%, -48%) scale(0.96);
+  }
+}
