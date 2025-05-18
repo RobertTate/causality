@@ -5,7 +5,7 @@
   "author": "Robert Tate",
   "description": "Orchestrate cause and effect relationships between tokens",
   "homepage_url": "https://github.com/RobertTate/causality",
-  "icon": "/icon.svg",
+  "icon": "/icon-alt.svg",
   "action": {
     "title": "Causality",
     "icon": "/icon.svg",
