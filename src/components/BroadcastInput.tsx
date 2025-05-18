@@ -2,7 +2,7 @@ import debounce from "lodash/debounce";
 import { useMemo, useState } from "react";
 
 import { updateEffectTokenData } from "../functions";
-import type { BroadCast, BroadcastInputProps, Destination } from "../types";
+import type { Broadcast, BroadcastInputProps, Destination } from "../types";
 import styles from "./BroadcastInput.module.css";
 
 export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
@@ -22,7 +22,7 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
           "broadcast",
           {
             channel: newValue,
-          } as BroadCast,
+          } as Broadcast,
         );
       }, 500),
     [cData.id, effect.tokenId, effect.effectId],
@@ -45,7 +45,7 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
           "broadcast",
           {
             data: newValue,
-          } as BroadCast,
+          } as Broadcast,
         );
       }, 500),
     [cData.id, effect.tokenId, effect.effectId],
@@ -74,7 +74,7 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
       "broadcast",
       {
         destination: newValue,
-      } as BroadCast,
+      } as Broadcast,
     );
   };
 

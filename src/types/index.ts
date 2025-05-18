@@ -15,6 +15,14 @@ export type EffectAction =
   | "";
 export type CausalityStatus = "Pending" | "Complete";
 
+export type Destination = "REMOTE" | "LOCAL" | "ALL";
+
+export type Broadcast = {
+  channel: string;
+  data: unknown;
+  destination: Destination;
+};
+
 export type TokenData = {
   tokenId: string;
   causalityId: string;
@@ -23,38 +31,30 @@ export type TokenData = {
   imageUrl: string;
 };
 
-export type CauseData = TokenData & {
+export type Cause = TokenData & {
   trigger: CauseTrigger;
   status: CausalityStatus;
   delay: string;
   isCollided: boolean;
 };
 
-export type Destination = "REMOTE" | "LOCAL" | "ALL";
-
-export type BroadCast = {
-  channel: string;
-  data: unknown;
-  destination: Destination;
-};
-
-export type EffectData = TokenData & {
+export type Effect = TokenData & {
   action: EffectAction;
-  broadcast?: BroadCast;
+  broadcast?: Broadcast;
   effectId: string;
 };
 
-export type CausalityData = {
+export type Causality = {
   id: string;
   timestamp: string;
-  cause?: CauseData;
-  effects?: EffectData[];
+  cause?: Cause;
+  effects?: Effect[];
 };
 
 export type CausalityTokenMetaData = {
   [ID]: {
     isCausalityToken: boolean;
-    causalities?: CausalityData[];
+    causalities?: Causality[];
   };
 };
 
@@ -64,8 +64,8 @@ export type CausalityToken = Image & {
 
 export type EffectDialogConfig = {
   open: boolean;
-  cData?: CausalityData;
-  effect?: EffectData;
+  cData?: Causality;
+  effect?: Effect;
   activeEffectId?: string;
 };
 
@@ -110,11 +110,11 @@ export type SortableProps = {
 };
 
 export type EffectProps = {
-  cData: CausalityData;
-  effect: EffectData;
+  cData: Causality;
+  effect: Effect;
 };
 
 export type BroadcastInputProps = {
-  cData: CausalityData;
-  effect: EffectData;
+  cData: Causality;
+  effect: Effect;
 };

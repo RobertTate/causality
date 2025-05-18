@@ -1,17 +1,17 @@
 import OBR from "@owlbear-rodeo/sdk";
 
 import { ID } from "../constants";
-import type { CausalityData, CausalityToken } from "../types";
+import type { Causality, CausalityToken } from "../types";
 
-export const handleRemoveCausality = (cData: CausalityData) => {
+export const handleRemoveCausality = (c: Causality) => {
   const tokensToRemoveCausalityFrom: string[] = [];
-  if (cData.effects && cData.effects.length > 0) {
-    cData.effects.forEach((effect) => {
+  if (c.effects && c.effects.length > 0) {
+    c.effects.forEach((effect) => {
       tokensToRemoveCausalityFrom.push(effect.tokenId);
     });
   }
-  if (cData.cause) {
-    tokensToRemoveCausalityFrom.push(cData.cause.tokenId);
+  if (c.cause) {
+    tokensToRemoveCausalityFrom.push(c.cause.tokenId);
   }
 
   OBR.scene.items.updateItems(
@@ -23,8 +23,8 @@ export const handleRemoveCausality = (cData: CausalityData) => {
         const itemToUpdate = item as CausalityToken;
         itemToUpdate.metadata[ID].causalities = itemToUpdate.metadata[
           ID
-        ].causalities?.filter((cDataToCheck) => {
-          return cDataToCheck.id !== cData.id;
+        ].causalities?.filter((causality) => {
+          return causality.id !== c.id;
         });
       }
     },

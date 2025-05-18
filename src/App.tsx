@@ -3,13 +3,13 @@ import { useEffect, useState } from "react";
 
 import styles from "./App.module.css";
 import icon from "./assets/icon.svg";
+import info from "./assets/info.svg";
 import { CausalityManager } from "./components/CausalityManager";
 import {
   useCausalityPointer,
   useCausalityTokenSetterMenuContext,
 } from "./functions/hooks";
 import type { Role } from "./types";
-import info from "./assets/info.svg";
 
 function App() {
   const [appIsReady, setAppIsReady] = useState(false);
@@ -33,7 +33,14 @@ function App() {
   return (
     <main className={styles["app-main"]}>
       <div className={styles["app-header-area"]}>
-        <a title="Read the docs" className={styles["app-info-link"]} href="https://github.com/RobertTate/causality" target="_blank"><img src={info} alt="Link to Docs" /></a>
+        <a
+          title="Read the docs"
+          className={styles["app-info-link"]}
+          href="https://github.com/RobertTate/causality"
+          target="_blank"
+        >
+          <img src={info} alt="Link to Docs" />
+        </a>
         <h1 className={styles["app-header"]}>
           <img
             className={styles["app-header-icon"]}

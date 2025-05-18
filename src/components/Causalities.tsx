@@ -12,7 +12,7 @@ import {
   updateCauseTokenData,
 } from "../functions";
 import { useAppStore } from "../functions/hooks";
-import type { CausalityData, CauseTrigger } from "../types";
+import type { Causality, CauseTrigger } from "../types";
 import styles from "./Causalities.module.css";
 import { Effect } from "./Effect";
 import { Droppable } from "./dnd/Droppable";
@@ -21,7 +21,7 @@ export const Causalities = memo(() => {
   const { tokens } = useAppStore();
 
   const populateCausalities = () => {
-    const causalities: { [id: string]: CausalityData } = {};
+    const causalities: { [id: string]: Causality } = {};
 
     tokens.forEach((token) => {
       const tokenCausalities = token.metadata[ID].causalities;
@@ -47,161 +47,165 @@ export const Causalities = memo(() => {
 
     const causalityDataArray = Object.values(causalities);
     return causalityDataArray.length > 0 ? (
-      causalityDataArray.sort((a, b) => {
-        return new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1;
-      }).map((cData) => {
-        const effectsIDSet = new Set();
+      causalityDataArray
+        .sort((a, b) => {
+          return new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1;
+        })
+        .map((cData) => {
+          const effectsIDSet = new Set();
 
-        return (
-          <motion.div
-            key={cData.id}
-            className={styles["causality"]}
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            transition={{ duration: 0.25 }}
-            layout="position"
-            data-status={cData.cause?.status}
-          >
-            <div className={styles["causality-title-area"]}>
-              <p>Causes</p>
-              <img
-                title="Reset"
-                onClick={() => handleResetCausality(cData)}
-                className={styles["causality-reset"]}
-                src={reset}
-                alt="Reset Causality"
-              />
-              <p className={styles["causality-status"]}>
-                Status:{" "}
-                <span data-status={cData.cause?.status}>
-                  {cData.cause?.status}
-                </span>
-              </p>
-              <img
-                title="Delete"
-                onClick={() => handleRemoveCausality(cData)}
-                className={styles["causality-delete"]}
-                src={fire}
-                alt="Delete Causality"
-              />
-              <p>Effects</p>
-            </div>
-            <div className={styles["causality-cause-effect-area"]}>
-              {/* CAUSE TOKEN AREA */}
-              {cData.cause && (
-                <div className={styles["causality-cause"]}>
-                  <p className={styles["causality-cause-when"]}>When:</p>
-                  <div className={styles["causality-cause-info"]}>
-                    <img
-                      className={styles["causality-cause-image"]}
-                      src={cData.cause?.imageUrl}
-                      alt={cData.cause?.name}
-                    />
-                    <p className={styles["causality-cause-name"]}>
-                      {cData.cause.name}
-                    </p>
+          return (
+            <motion.div
+              key={cData.id}
+              className={styles["causality"]}
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+              transition={{ duration: 0.25 }}
+              layout="position"
+              data-status={cData.cause?.status}
+            >
+              <div className={styles["causality-title-area"]}>
+                <p>Causes</p>
+                <img
+                  title="Reset"
+                  onClick={() => handleResetCausality(cData)}
+                  className={styles["causality-reset"]}
+                  src={reset}
+                  alt="Reset Causality"
+                />
+                <p className={styles["causality-status"]}>
+                  Status:{" "}
+                  <span data-status={cData.cause?.status}>
+                    {cData.cause?.status}
+                  </span>
+                </p>
+                <img
+                  title="Delete"
+                  onClick={() => handleRemoveCausality(cData)}
+                  className={styles["causality-delete"]}
+                  src={fire}
+                  alt="Delete Causality"
+                />
+                <p>Effects</p>
+              </div>
+              <div className={styles["causality-cause-effect-area"]}>
+                {/* CAUSE TOKEN AREA */}
+                {cData.cause && (
+                  <div className={styles["causality-cause"]}>
+                    <p className={styles["causality-cause-when"]}>When:</p>
+                    <div className={styles["causality-cause-info"]}>
+                      <img
+                        className={styles["causality-cause-image"]}
+                        src={cData.cause?.imageUrl}
+                        alt={cData.cause?.name}
+                      />
+                      <p className={styles["causality-cause-name"]}>
+                        {cData.cause.name}
+                      </p>
+                    </div>
+                    <div className={styles["causality-cause-trigger-settings"]}>
+                      <select
+                        onChange={(event) => {
+                          if (cData.cause) {
+                            return updateCauseTokenData(
+                              cData.id,
+                              cData.cause.tokenId,
+                              "trigger",
+                              event.target.value as CauseTrigger,
+                            );
+                          }
+                        }}
+                        name="cause-triggers"
+                        value={cData.cause.trigger || ""}
+                        disabled={
+                          cData.cause?.status === "Complete" ? true : false
+                        }
+                      >
+                        <option value="">-- Please choose an option --</option>
+                        <option value="collision">Is Collided Into</option>
+                        <option value="appears">Appears</option>
+                        <option value="disappears">Disappears</option>
+                      </select>
+                    </div>
                   </div>
-                  <div className={styles["causality-cause-trigger-settings"]}>
+                )}
+                {/* EFFECT TOKEN AREA */}
+                <Droppable id={cData.id}>
+                  {cData.effects && cData.effects.length > 0 ? (
+                    <>
+                      {cData.effects.map((effect) => {
+                        if (!effectsIDSet.has(effect.effectId)) {
+                          effectsIDSet.add(effect.effectId);
+                          return (
+                            <Effect
+                              key={effect.effectId}
+                              cData={cData}
+                              effect={effect}
+                            />
+                          );
+                        }
+                      })}
+                    </>
+                  ) : (
+                    <motion.p key="emptyEffectDisclaimer" layout="position">
+                      <em>
+                        Drag tokens from your token pool here to add them as an
+                        "Effect" token.
+                      </em>
+                    </motion.p>
+                  )}
+                </Droppable>
+              </div>
+              <div className={styles["causality-footer-area"]}>
+                <div className={styles["causality-time-delay"]}>
+                  <img
+                    className={styles["causality-time-delay-icon"]}
+                    src={timer}
+                    alt="time delay icon"
+                  />
+                  <label className={styles["causality-time-delay-selection"]}>
                     <select
+                      name="time-delay"
+                      title="Set a time delay"
                       onChange={(event) => {
                         if (cData.cause) {
                           return updateCauseTokenData(
                             cData.id,
                             cData.cause.tokenId,
-                            "trigger",
+                            "delay",
                             event.target.value as CauseTrigger,
                           );
                         }
                       }}
-                      name="cause-triggers"
-                      value={cData.cause.trigger || ""}
+                      value={cData.cause?.delay}
                       disabled={
                         cData.cause?.status === "Complete" ? true : false
                       }
                     >
-                      <option value="">-- Please choose an option --</option>
-                      <option value="collision">Is Collided Into</option>
-                      <option value="appears">Appears</option>
-                      <option value="disappears">Disappears</option>
-                    </select>
-                  </div>
-                </div>
-              )}
-              {/* EFFECT TOKEN AREA */}
-              <Droppable id={cData.id}>
-                {cData.effects && cData.effects.length > 0 ? (
-                  <>
-                    {cData.effects.map((effect) => {
-                      if (!effectsIDSet.has(effect.effectId)) {
-                        effectsIDSet.add(effect.effectId);
+                      {[
+                        ["0", "0s"],
+                        ["500", "0.5s"],
+                        ["1000", "1s"],
+                        ["2000", "2s"],
+                        ["3000", "3s"],
+                        ["4000", "4s"],
+                        ["5000", "5s"],
+                      ].map((dItem) => {
+                        const [delay, delayDisplay] = dItem;
                         return (
-                          <Effect
-                            key={effect.effectId}
-                            cData={cData}
-                            effect={effect}
-                          />
+                          <option key={delay} value={delay}>
+                            {delayDisplay}
+                          </option>
                         );
-                      }
-                    })}
-                  </>
-                ) : (
-                  <motion.p key="emptyEffectDisclaimer" layout="position">
-                    <em>
-                      Drag tokens from your token pool here to add them as an
-                      "Effect" token.
-                    </em>
-                  </motion.p>
-                )}
-              </Droppable>
-            </div>
-            <div className={styles["causality-footer-area"]}>
-              <div className={styles["causality-time-delay"]}>
-                <img
-                  className={styles["causality-time-delay-icon"]}
-                  src={timer}
-                  alt="time delay icon"
-                />
-                <label className={styles["causality-time-delay-selection"]}>
-                  <select
-                    name="time-delay"
-                    title="Set a time delay"
-                    onChange={(event) => {
-                      if (cData.cause) {
-                        return updateCauseTokenData(
-                          cData.id,
-                          cData.cause.tokenId,
-                          "delay",
-                          event.target.value as CauseTrigger,
-                        );
-                      }
-                    }}
-                    value={cData.cause?.delay}
-                    disabled={cData.cause?.status === "Complete" ? true : false}
-                  >
-                    {[
-                      ["0", "0s"],
-                      ["500", "0.5s"],
-                      ["1000", "1s"],
-                      ["2000", "2s"],
-                      ["3000", "3s"],
-                      ["4000", "4s"],
-                      ["5000", "5s"],
-                    ].map((dItem) => {
-                      const [delay, delayDisplay] = dItem;
-                      return (
-                        <option key={delay} value={delay}>
-                          {delayDisplay}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </label>
+                      })}
+                    </select>
+                  </label>
+                </div>
               </div>
-            </div>
-          </motion.div>
-        );
-      })
+            </motion.div>
+          );
+        })
     ) : (
       <motion.p
         key="emptyDisclaimer"
