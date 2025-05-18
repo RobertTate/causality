@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "manifest_version": 1,
   "author": "Robert Tate",
-  "description": "Orchestrate cause and effect relationships between tokens interacting on the map.",
+  "description": "Orchestrate cause and effect relationships between tokens",
   "homepage_url": "https://github.com/RobertTate/causality",
   "icon": "/icon.svg",
   "action": {
