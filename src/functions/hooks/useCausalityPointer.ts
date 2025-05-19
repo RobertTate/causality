@@ -1,6 +1,7 @@
 import OBR, {
   type InteractionManager,
   type Item,
+  type Image,
   isImage,
 } from "@owlbear-rodeo/sdk";
 import { useEffect } from "react";
@@ -15,8 +16,9 @@ export const useCausalityPointer = () => {
 
   let underwayCollisions: { [key: string]: boolean } = {};
 
-  const checkForCollisions = (item: Item) => {
+  const checkForCollisions = (item: Image) => {
     const currentTarget = item as CausalityToken;
+    const currentTargetID = item.id;
     if (currentTarget) {
       const tokensToCheck = collisionTokensRef.current;
       tokensToCheck.forEach((cToken) => {
@@ -32,10 +34,10 @@ export const useCausalityPointer = () => {
               underwayCollisions[cToken.id] = true;
               OBR.scene.items.updateItems(
                 (item) => {
-                  return item.id === cToken.id;
+                  return [cToken.id, currentTargetID].includes(item.id);
                 },
                 (items) => {
-                  const itemToUpdate = items[0] as CausalityToken;
+                  const itemToUpdate = items.find((item) => item.id === cToken.id) as CausalityToken;
                   const itemMetaData = itemToUpdate.metadata[ID];
                   const causalities = itemMetaData.causalities;
                   if (causalities && causalities.length > 0) {
@@ -44,6 +46,14 @@ export const useCausalityPointer = () => {
                       if (cause) {
                         if (cause.isCollided === false) {
                           cause.isCollided = true;
+                          const instigatorEffects = cause.instigatorEffects;
+                          if (instigatorEffects && instigatorEffects.length > 0) {
+                            for (const ie of instigatorEffects) {
+                              const oldTokenID = ie.tokenId;
+                              ie.originalCauseTokenId = oldTokenID;
+                              ie.tokenId = currentTargetID;
+                            }
+                          }
                         }
                       }
                     }
@@ -111,13 +121,44 @@ export const useCausalityPointer = () => {
         async onToolDragMove(_, ev) {
           if (interaction) {
             if (typeof interaction !== "string") {
-              const [update] = interaction;
-              const itemToUpdate = update((item) => {
-                item.position = ev.pointerPosition;
-                checkForCollisions(item);
-              });
-              dragCount++;
-              if (dragCount % 20 === 0) {
+              const [update, stop] = interaction;
+              try {
+                const itemToUpdate = update((item) => {
+                  item.position = ev.pointerPosition;
+                  checkForCollisions(item as Image);
+                });
+                dragCount++;
+                if (dragCount % 20 === 0) {
+                  await OBR.scene.items.updateItems(
+                    (item) => {
+                      return item.id === itemToUpdate.id;
+                    },
+                    (items) => {
+                      for (let item of items) {
+                        if (item.id === itemToUpdate.id) {
+                          item.position = itemToUpdate.position;
+                        }
+                      }
+                    },
+                  );
+                }
+              } catch (e) {
+                console.warn(e);
+                stop();
+                interaction = "";
+                underwayCollisions = {};
+              }
+            }
+          }
+        },
+        async onToolDragEnd(_, ev) {
+          if (interaction) {
+            if (typeof interaction !== "string") {
+              const [update, stop] = interaction;
+              try {
+                const itemToUpdate = update((item) => {
+                  item.position = ev.pointerPosition;
+                });
                 await OBR.scene.items.updateItems(
                   (item) => {
                     return item.id === itemToUpdate.id;
@@ -130,32 +171,14 @@ export const useCausalityPointer = () => {
                     }
                   },
                 );
+                stop();
+                interaction = "";
+                underwayCollisions = {};
+              } catch (e) {
+                stop();
+                interaction = "";
+                underwayCollisions = {}
               }
-            }
-          }
-        },
-        async onToolDragEnd(_, ev) {
-          if (interaction) {
-            if (typeof interaction !== "string") {
-              const [update, stop] = interaction;
-              const itemToUpdate = update((item) => {
-                item.position = ev.pointerPosition;
-              });
-              await OBR.scene.items.updateItems(
-                (item) => {
-                  return item.id === itemToUpdate.id;
-                },
-                (items) => {
-                  for (let item of items) {
-                    if (item.id === itemToUpdate.id) {
-                      item.position = itemToUpdate.position;
-                    }
-                  }
-                },
-              );
-              stop();
-              interaction = "";
-              underwayCollisions = {};
             }
           }
         },

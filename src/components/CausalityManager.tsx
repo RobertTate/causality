@@ -72,8 +72,8 @@ export const CausalityManager = () => {
 
           const alreadyPresentCausality = itemToUpdate.metadata[
             ID
-          ].causalities.find((cData) => {
-            return cData.id === causalityId;
+          ].causalities.find((causality) => {
+            return causality.id === causalityId;
           });
 
           const uniqueKey = randomUUID();

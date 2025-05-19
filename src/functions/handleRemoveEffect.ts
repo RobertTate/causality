@@ -16,8 +16,8 @@ export const handleRemoveEffect = (
       const itemToUpdate = items[0] as CausalityToken;
       const causalities = itemToUpdate.metadata?.[ID]?.causalities;
       if (causalities) {
-        const matchingCausalityIdx = causalities.findIndex((cData) => {
-          return cData.id === causalityID;
+        const matchingCausalityIdx = causalities.findIndex((causality) => {
+          return causality.id === causalityID;
         });
         if (matchingCausalityIdx !== -1) {
           const matchingCausality = causalities[matchingCausalityIdx];

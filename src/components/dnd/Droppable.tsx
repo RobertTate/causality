@@ -1,5 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
 import type { CSSProperties } from "react";
+import { motion } from "motion/react";
 
 import { DROP_ZONE_ID } from "../../constants";
 import type { DroppableProps } from "../../types";
@@ -16,6 +17,9 @@ export const Droppable = ({ children, id }: DroppableProps) => {
   };
 
   const effectsZoneStyles: CSSProperties = {
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "space-between",
     backgroundColor: "#696969",
     flex: 1,
     padding: "0.5rem",
@@ -30,8 +34,16 @@ export const Droppable = ({ children, id }: DroppableProps) => {
   const style = id === DROP_ZONE_ID ? causalityZoneStyles : effectsZoneStyles;
 
   return (
-    <div style={style} ref={setNodeRef}>
+    <motion.div
+      style={style} 
+      ref={setNodeRef}
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      transition={{ duration: 0.25 }}
+      layout
+    >
       {children}
-    </div>
+    </motion.div>
   );
 };

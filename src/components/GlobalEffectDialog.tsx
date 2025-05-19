@@ -9,7 +9,7 @@ import styles from "./GlobalEffectDialog.module.css";
 
 export const GlobalEffectDialog = () => {
   const { effectDialog, updateEffectDialog } = useAppStore();
-  const { open, cData, effect } = effectDialog;
+  const { open, causality, effect } = effectDialog;
 
   const handleClose = () => {
     updateEffectDialog({
@@ -28,12 +28,12 @@ export const GlobalEffectDialog = () => {
     <Dialog.Root open={open}>
       <Dialog.Portal>
         <Dialog.Overlay className={styles["dialog-overlay"]} />
-        <Dialog.Content className={styles["dialog-content"]}>
-          {cData && (
+        <Dialog.Content aria-describedby={undefined} className={styles["dialog-content"]}>
+          {causality && (
             <p className={styles["dialog-pre"]}>
-              When <img src={cData.cause?.imageUrl} alt={cData.cause?.name} />
-              <strong>{cData.cause?.name}</strong>{" "}
-              {causeTriggerTextMap[cData.cause?.trigger || "default"]}
+              When <img src={causality.cause?.imageUrl} alt={causality.cause?.name} />
+              <strong>{causality.cause?.name}</strong>{" "}
+              {causeTriggerTextMap[causality.cause?.trigger || "default"]}
             </p>
           )}
 
@@ -54,12 +54,12 @@ export const GlobalEffectDialog = () => {
             <strong>will...</strong>
           </p>
           <div className={styles["dialog-effect-action-settings"]}>
-            {cData && effect && (
+            {causality && effect && (
               <select
                 name="dialog-effect-actions"
                 onChange={(event) => {
                   updateEffectTokenData(
-                    cData.id,
+                    causality.id,
                     effect.tokenId,
                     effect.effectId,
                     "action",
@@ -67,7 +67,7 @@ export const GlobalEffectDialog = () => {
                   );
                 }}
                 value={effect.action || ""}
-                disabled={cData.cause?.status === "Complete" ? true : false}
+                disabled={causality.cause?.status === "Complete" ? true : false}
               >
                 <option value="">-- Please choose an option --</option>
                 <option value="lock">Lock</option>
@@ -79,8 +79,8 @@ export const GlobalEffectDialog = () => {
             )}
           </div>
 
-          {cData && effect?.action === "broadcast" && (
-            <BroadcastInput cData={cData} effect={effect} />
+          {causality && effect?.action === "broadcast" && (
+            <BroadcastInput causality={causality} effect={effect} />
           )}
 
           {effect?.action && (

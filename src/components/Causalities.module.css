@@ -136,3 +136,18 @@
 .causality-time-delay-selection {
   margin-left: 0.5rem;
 }
+
+.causality-triggering-token-icon {
+  position: relative;
+  bottom: 0px;
+  width: 20px;
+  height: 20px;
+  margin-bottom: -6px;
+  cursor: pointer;
+}
+
+.causality-triggering-token-text {
+  display: inline;
+  font-size: 12px;
+  margin-left: 0.25rem;
+}

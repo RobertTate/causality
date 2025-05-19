@@ -5,7 +5,7 @@ import { updateEffectTokenData } from "../functions";
 import type { Broadcast, BroadcastInputProps, Destination } from "../types";
 import styles from "./BroadcastInput.module.css";
 
-export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
+export const BroadcastInput = ({ causality, effect }: BroadcastInputProps) => {
   const [channel, setChannel] = useState("");
   const [dataValue, setDataValue] = useState("");
   const [dataError, setDataError] = useState<string | null>(null);
@@ -14,9 +14,8 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
   const debouncedUpdateChannel = useMemo(
     () =>
       debounce((newValue: string) => {
-        console.log("update");
         updateEffectTokenData(
-          cData.id,
+          causality.id,
           effect.tokenId,
           effect.effectId,
           "broadcast",
@@ -25,7 +24,7 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
           } as Broadcast,
         );
       }, 500),
-    [cData.id, effect.tokenId, effect.effectId],
+    [causality.id, effect.tokenId, effect.effectId],
   );
 
   const handleChannelChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,9 +36,8 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
   const debouncedUpdateData = useMemo(
     () =>
       debounce((newValue: string) => {
-        console.log("update json");
         updateEffectTokenData(
-          cData.id,
+          causality.id,
           effect.tokenId,
           effect.effectId,
           "broadcast",
@@ -48,7 +46,7 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
           } as Broadcast,
         );
       }, 500),
-    [cData.id, effect.tokenId, effect.effectId],
+    [causality.id, effect.tokenId, effect.effectId],
   );
 
   const handleDataChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -66,9 +64,8 @@ export const BroadcastInput = ({ cData, effect }: BroadcastInputProps) => {
   const handleDestinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value as Destination;
     setDestination(newValue);
-    console.log("update");
     updateEffectTokenData(
-      cData.id,
+      causality.id,
       effect.tokenId,
       effect.effectId,
       "broadcast",

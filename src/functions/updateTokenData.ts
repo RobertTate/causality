@@ -17,8 +17,8 @@ export const updateCauseTokenData = <K extends keyof Cause>(
       const itemToUpdate = items[0] as CausalityToken;
       const causalities = itemToUpdate.metadata?.[ID]?.causalities;
       if (causalities) {
-        const matchingCausality = causalities.find((cData) => {
-          return cData.id === causalityID;
+        const matchingCausality = causalities.find((causality) => {
+          return causality.id === causalityID;
         });
         if (matchingCausality) {
           const causeToken = matchingCausality.cause;
@@ -46,13 +46,20 @@ export const updateEffectTokenData = <K extends keyof Effect>(
       const itemToUpdate = items[0] as CausalityToken;
       const causalities = itemToUpdate.metadata?.[ID]?.causalities;
       if (causalities) {
-        const matchingCausality = causalities.find((cData) => {
-          return cData.id === causalityID;
+        const matchingCausality = causalities.find((causality) => {
+          return causality.id === causalityID;
         });
         if (matchingCausality) {
           const effects = matchingCausality.effects;
-          if (effects && effects.length > 0) {
-            const matchingEffect = effects.find((effect) => {
+          const instigatorEffects = matchingCausality?.cause?.instigatorEffects;
+
+          const allEffects = instigatorEffects ? [
+            ...(effects || []),
+            ...(instigatorEffects || [])
+          ] : effects
+
+          if (allEffects && allEffects.length > 0) {
+            const matchingEffect = allEffects.find((effect) => {
               return effect.effectId === effectID;
             });
             if (matchingEffect) {

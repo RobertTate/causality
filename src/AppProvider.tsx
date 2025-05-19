@@ -51,15 +51,15 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           if (causalities && causalities.length > 0) {
             for (let k = 0; k < causalities.length; k++) {
               const causality = causalities[k];
-              const causeToken = causality.cause;
-              if (causeToken) {
-                if (causeToken.trigger && causeToken.status === "Pending") {
-                  switch (causeToken.trigger) {
+              const cause = causality.cause;
+              if (cause) {
+                if (cause.trigger && cause.status === "Pending") {
+                  switch (cause.trigger) {
                     case "appears": {
                       if (cToken.visible === true) {
                         setTimeout(
                           () => triggerEffectTokens(causality.id),
-                          Number(causeToken.delay),
+                          Number(cause.delay),
                         );
                       }
                       break;
@@ -68,16 +68,16 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                       if (cToken.visible === false) {
                         setTimeout(
                           () => triggerEffectTokens(causality.id),
-                          Number(causeToken.delay),
+                          Number(cause.delay),
                         );
                       }
                       break;
                     }
                     case "collision": {
-                      if (causeToken.isCollided) {
+                      if (cause.isCollided) {
                         setTimeout(
-                          () => triggerEffectTokens(causality.id),
-                          Number(causeToken.delay),
+                          () => triggerEffectTokens(causality.id, cause.instigatorEffects),
+                          Number(cause.delay),
                         );
                       }
                       collisionTokens.push(cToken);

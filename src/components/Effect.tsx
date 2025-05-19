@@ -2,31 +2,31 @@ import { motion } from "motion/react";
 import { useEffect } from "react";
 
 import fire from "../assets/fire.svg";
-import { handleRemoveEffect } from "../functions";
+import { handleRemoveEffect, updateCauseTokenData } from "../functions";
 import { useAppStore } from "../functions/hooks";
 import type { EffectProps } from "../types";
 import styles from "./Effect.module.css";
 
-export const Effect = ({ cData, effect }: EffectProps) => {
+export const Effect = ({ causality, effect, instigatorEffects }: EffectProps) => {
   const { effectDialog, updateEffectDialog } = useAppStore();
   const { activeEffectId, open } = effectDialog;
-
-  const isEditAllowed = cData.cause?.status === "Complete" ? false : true;
+  const cause = causality.cause;
+  const isEditAllowed = causality.cause?.status === "Complete" ? false : true;
 
   useEffect(() => {
     if (activeEffectId === effect.effectId && open) {
       updateEffectDialog({
         open: true,
-        cData,
+        causality,
         effect,
       });
     }
-  }, [cData, activeEffectId]);
+  }, [causality, activeEffectId]);
 
   const handleShowEffectDialog = () => {
     updateEffectDialog({
       open: true,
-      cData,
+      causality,
       effect,
       activeEffectId: effect.effectId,
     });
@@ -40,12 +40,24 @@ export const Effect = ({ cData, effect }: EffectProps) => {
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
       transition={{ duration: 0.25 }}
-      layout="position"
+      layout="preserve-aspect"
     >
       <img
-        onClick={() =>
-          handleRemoveEffect(cData.id, effect.tokenId, effect.effectId)
-        }
+        onClick={() => {
+          if ("isInstigator" in effect && effect.isInstigator && cause) {
+            const newInstigatorEffects = instigatorEffects.filter((ie) => {
+              return ie.effectId !== effect.effectId;
+            });
+            updateCauseTokenData(
+              causality.id,
+              cause.tokenId,
+              "instigatorEffects",
+              newInstigatorEffects
+            );
+          } else {
+            handleRemoveEffect(causality.id, effect.tokenId, effect.effectId)
+          }
+        }}
         className={styles["effect-delete"]}
         src={fire}
         alt="Delete Causality"
@@ -63,11 +75,9 @@ export const Effect = ({ cData, effect }: EffectProps) => {
         </div>
       </div>
 
-      {effect.action && (
-        <p className={styles["effect-action-choice"]}>
-          ...will {effect.action}
-        </p>
-      )}
+      <p className={styles["effect-action-choice"]}>
+        ...will {effect.action || "_______"}
+      </p>
 
       <button
         className={styles["effect-edit"]}

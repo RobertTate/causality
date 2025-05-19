@@ -2,6 +2,7 @@ import { Image } from "@owlbear-rodeo/sdk";
 import type { ReactElement } from "react";
 
 import { ID } from "../constants";
+import React from "react";
 
 export type Role = "GM" | "PLAYER" | undefined;
 
@@ -31,17 +32,23 @@ export type TokenData = {
   imageUrl: string;
 };
 
+export type Effect = TokenData & {
+  action: EffectAction;
+  broadcast?: Broadcast;
+  effectId: string;
+};
+
+export type InstigatorEffect = Effect & {
+  isInstigator?: boolean;
+  originalCauseTokenId?: string;
+}
+
 export type Cause = TokenData & {
   trigger: CauseTrigger;
   status: CausalityStatus;
   delay: string;
   isCollided: boolean;
-};
-
-export type Effect = TokenData & {
-  action: EffectAction;
-  broadcast?: Broadcast;
-  effectId: string;
+  instigatorEffects?: InstigatorEffect[];
 };
 
 export type Causality = {
@@ -64,7 +71,7 @@ export type CausalityToken = Image & {
 
 export type EffectDialogConfig = {
   open: boolean;
-  cData?: Causality;
+  causality?: Causality;
   effect?: Effect;
   activeEffectId?: string;
 };
@@ -110,11 +117,12 @@ export type SortableProps = {
 };
 
 export type EffectProps = {
-  cData: Causality;
-  effect: Effect;
+  causality: Causality;
+  effect: Effect | InstigatorEffect;
+  instigatorEffects: InstigatorEffect[];
 };
 
 export type BroadcastInputProps = {
-  cData: Causality;
+  causality: Causality;
   effect: Effect;
 };
