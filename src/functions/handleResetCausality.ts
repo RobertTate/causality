@@ -29,12 +29,9 @@ export const handleResetCausality = (c: Causality) => {
               const cause = causality.cause;
               if (cause) {
                 cause.status = "Pending";
-
                 if (cause.isCollided) {
                   cause.isCollided = false;
                 }
-
-                cause.trigger = "";
               }
             }
           });
