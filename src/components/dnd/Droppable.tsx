@@ -1,6 +1,6 @@
 import { useDroppable } from "@dnd-kit/core";
-import type { CSSProperties } from "react";
 import { motion } from "motion/react";
+import type { CSSProperties } from "react";
 
 import { DROP_ZONE_ID } from "../../constants";
 import type { DroppableProps } from "../../types";
@@ -35,7 +35,7 @@ export const Droppable = ({ children, id }: DroppableProps) => {
 
   return (
     <motion.div
-      style={style} 
+      style={style}
       ref={setNodeRef}
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}

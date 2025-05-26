@@ -1,4 +1,5 @@
 import OBR, { type Image } from "@owlbear-rodeo/sdk";
+
 import { ID, underway } from "../constants";
 import { CausalityToken } from "../types";
 import { getImageBoundingBox, intersect } from "./boundingBox";
@@ -10,9 +11,12 @@ export const hasCollisionOccured = (a: CausalityToken, b: CausalityToken) => {
     return intersect(aBoundingBox, bBoundingBox);
   }
   return false;
-}
+};
 
-export const checkForCollisions = async (item: Image, collisionTokensRef: React.RefObject<CausalityToken[]>) => {
+export const checkForCollisions = async (
+  item: Image,
+  collisionTokensRef: React.RefObject<CausalityToken[]>,
+) => {
   const currentTarget = item as CausalityToken;
   const currentTargetID = item.id;
   const tokensToCheck = collisionTokensRef.current;
@@ -33,7 +37,9 @@ export const checkForCollisions = async (item: Image, collisionTokensRef: React.
                 return [cToken.id].includes(item.id);
               },
               (items) => {
-                const itemToUpdate = items.find((item) => item.id === cToken.id) as CausalityToken;
+                const itemToUpdate = items.find(
+                  (item) => item.id === cToken.id,
+                ) as CausalityToken;
                 const itemMetaData = itemToUpdate.metadata[ID];
                 const causalities = itemMetaData.causalities;
                 if (causalities && causalities.length > 0) {
@@ -59,6 +65,6 @@ export const checkForCollisions = async (item: Image, collisionTokensRef: React.
           }
         }
       }
-    };
+    }
   }
 };

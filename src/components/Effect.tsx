@@ -7,7 +7,11 @@ import { useAppStore } from "../functions/hooks";
 import type { EffectProps } from "../types";
 import styles from "./Effect.module.css";
 
-export const Effect = ({ causality, effect, instigatorEffects }: EffectProps) => {
+export const Effect = ({
+  causality,
+  effect,
+  instigatorEffects,
+}: EffectProps) => {
   const { effectDialog, updateEffectDialog } = useAppStore();
   const { activeEffectId, open } = effectDialog;
   const cause = causality.cause;
@@ -52,10 +56,10 @@ export const Effect = ({ causality, effect, instigatorEffects }: EffectProps) =>
               causality.id,
               cause.tokenId,
               "instigatorEffects",
-              newInstigatorEffects
+              newInstigatorEffects,
             );
           } else {
-            handleRemoveEffect(causality.id, effect.tokenId, effect.effectId)
+            handleRemoveEffect(causality.id, effect.tokenId, effect.effectId);
           }
         }}
         className={styles["effect-delete"]}

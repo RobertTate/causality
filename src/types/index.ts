@@ -1,8 +1,8 @@
 import { Image } from "@owlbear-rodeo/sdk";
 import type { ReactElement } from "react";
+import React from "react";
 
 import { ID } from "../constants";
-import React from "react";
 
 export type Role = "GM" | "PLAYER" | undefined;
 
@@ -41,7 +41,7 @@ export type Effect = TokenData & {
 export type InstigatorEffect = Effect & {
   isInstigator?: boolean;
   originalCauseTokenId?: string;
-}
+};
 
 export type Cause = TokenData & {
   trigger: CauseTrigger;

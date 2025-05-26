@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AppContext } from "./AppContext";
 import { ID } from "./constants";
-import { triggerEffectTokens, hasCollisionOccured } from "./functions";
+import { hasCollisionOccured, triggerEffectTokens } from "./functions";
 import type {
   AppContextProps,
   AppProviderProps,
@@ -59,34 +59,28 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                   switch (cause.trigger) {
                     case "appears": {
                       if (cToken.visible === true) {
-                        setTimeout(
-                          () => {
-                            return triggerEffectTokens(causality.id)
-                          },
-                          Number(cause.delay),
-                        );
+                        setTimeout(() => {
+                          return triggerEffectTokens(causality.id);
+                        }, Number(cause.delay));
                       }
                       break;
                     }
                     case "disappears": {
                       if (cToken.visible === false) {
-                        setTimeout(
-                          () => {
-                            return triggerEffectTokens(causality.id)
-                          },
-                          Number(cause.delay),
-                        );
+                        setTimeout(() => {
+                          return triggerEffectTokens(causality.id);
+                        }, Number(cause.delay));
                       }
                       break;
                     }
                     case "collision": {
                       if (cause.isCollided) {
-                        setTimeout(
-                          () => {
-                            return triggerEffectTokens(causality.id, cause.instigatorEffects)
-                          },
-                          Number(cause.delay),
-                        );
+                        setTimeout(() => {
+                          return triggerEffectTokens(
+                            causality.id,
+                            cause.instigatorEffects,
+                          );
+                        }, Number(cause.delay));
                       }
                       collisionTokens.push(cToken);
                       break;
@@ -101,13 +95,18 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           if (activeToolMode === "rodeo.owlbear.tool-mode/move") {
             const tokensToCheck = collisionTokensRef.current;
             for (const tokenToCheck of tokensToCheck) {
-              if (cToken.id !== tokenToCheck.id && hasCollisionOccured(cToken, tokenToCheck)) {
+              if (
+                cToken.id !== tokenToCheck.id &&
+                hasCollisionOccured(cToken, tokenToCheck)
+              ) {
                 await OBR.scene.items.updateItems(
                   (item) => {
                     return [tokenToCheck.id].includes(item.id);
                   },
                   (items) => {
-                    const itemToUpdate = items.find((item) => item.id === tokenToCheck.id) as CausalityToken;
+                    const itemToUpdate = items.find(
+                      (item) => item.id === tokenToCheck.id,
+                    ) as CausalityToken;
                     const itemMetaData = itemToUpdate.metadata[ID];
                     const causalities = itemMetaData.causalities;
                     if (causalities && causalities.length > 0) {
@@ -117,7 +116,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                           if (cause.isCollided === false) {
                             cause.isCollided = true;
                             const instigatorEffects = cause.instigatorEffects;
-                            if (instigatorEffects && instigatorEffects.length > 0) {
+                            if (
+                              instigatorEffects &&
+                              instigatorEffects.length > 0
+                            ) {
                               for (const ie of instigatorEffects) {
                                 const oldTokenID = ie.tokenId;
                                 ie.originalCauseTokenId = oldTokenID;

@@ -1,14 +1,14 @@
 import OBR, {
+  type Image,
   type InteractionManager,
   type Item,
-  type Image,
   isImage,
 } from "@owlbear-rodeo/sdk";
 import { useEffect } from "react";
 
 import { ID, underway } from "../../constants";
-import { useAppStore } from "./useAppStore";
 import { checkForCollisions } from "../checkForCollisions";
+import { useAppStore } from "./useAppStore";
 
 export const useCausalityPointer = () => {
   const { collisionTokensRef } = useAppStore();
@@ -123,7 +123,7 @@ export const useCausalityPointer = () => {
               } catch (e) {
                 stop();
                 interaction = "";
-                underway.collisions = {}
+                underway.collisions = {};
               }
             }
           }

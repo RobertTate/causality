@@ -1,11 +1,12 @@
 import { isArray, mergeWith } from "lodash";
 import { AnimatePresence, motion } from "motion/react";
 import { memo } from "react";
+import ShortUniqueId from "short-unique-id";
 
 import fire from "../assets/fire.svg";
 import reset from "../assets/reset.svg";
-import timer from "../assets/timer.svg";
 import target from "../assets/target.svg";
+import timer from "../assets/timer.svg";
 import { DROP_ZONE_ID, ID } from "../constants";
 import {
   handleRemoveCausality,
@@ -17,7 +18,6 @@ import type { Causality, CauseTrigger } from "../types";
 import styles from "./Causalities.module.css";
 import { Effect } from "./Effect";
 import { Droppable } from "./dnd/Droppable";
-import ShortUniqueId from "short-unique-id";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
@@ -60,10 +60,12 @@ export const Causalities = memo(() => {
           const cause = causality.cause;
           const instigatorEffects = cause?.instigatorEffects;
           const effects = causality.effects;
-          const allEffects = instigatorEffects && instigatorEffects.length > 0 && cause.trigger === "collision" ? [
-            ...(effects || []),
-            ...instigatorEffects
-          ] : effects;
+          const allEffects =
+            instigatorEffects &&
+            instigatorEffects.length > 0 &&
+            cause.trigger === "collision"
+              ? [...(effects || []), ...instigatorEffects]
+              : effects;
 
           return (
             <motion.div
@@ -127,9 +129,7 @@ export const Causalities = memo(() => {
                         }}
                         name="cause-triggers"
                         value={cause.trigger || ""}
-                        disabled={
-                          cause?.status === "Complete" ? true : false
-                        }
+                        disabled={cause?.status === "Complete" ? true : false}
                       >
                         <option value="">-- Please choose an option --</option>
                         <option value="collision">Is Collided Into</option>
@@ -158,9 +158,14 @@ export const Causalities = memo(() => {
                       })}
                     </>
                   ) : (
-                    <motion.p key="emptyEffectDisclaimer" layout="position" className={styles["causality-empty-effect-disclaimer"]}>
+                    <motion.p
+                      key="emptyEffectDisclaimer"
+                      layout="position"
+                      className={styles["causality-empty-effect-disclaimer"]}
+                    >
                       <em>
-                        Drag tokens here from your <strong>token pool</strong> to add them as an "Effect".
+                        Drag tokens here from your <strong>token pool</strong>{" "}
+                        to add them as an "Effect".
                       </em>
                     </motion.p>
                   )}
@@ -191,17 +196,20 @@ export const Causalities = memo(() => {
                                   // Set the tokenID to the cause token, just until the collision occurs.
                                   // It will then be updated to the token id for the token that actually
                                   // instigated a collision.
-                                  tokenId: cause.tokenId
-                                }
-                              ]
+                                  tokenId: cause.tokenId,
+                                },
+                              ],
                             );
                           }}
                         />
-                        <p className={styles["causality-triggering-token-text"]} ><em>&lt;– Add a Triggering Token Effect</em></p>
+                        <p
+                          className={styles["causality-triggering-token-text"]}
+                        >
+                          <em>&lt;– Add a Triggering Token Effect</em>
+                        </p>
                       </div>
                     )}
                   </>
-
                 </Droppable>
               </div>
               <div className={styles["causality-footer-area"]}>
@@ -262,8 +270,9 @@ export const Causalities = memo(() => {
         }}
       >
         <em>
-          Drag tokens here from your <strong>token pool</strong> to create a new "Causality", adding them as the "Cause".
-          When a "Cause" condition is met, each associated "Effect" is triggered.
+          Drag tokens here from your <strong>token pool</strong> to create a new
+          "Causality", adding them as the "Cause". When a "Cause" condition is
+          met, each associated "Effect" is triggered.
         </em>
       </motion.p>
     );

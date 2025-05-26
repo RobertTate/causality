@@ -3,7 +3,10 @@ import OBR from "@owlbear-rodeo/sdk";
 import { ID } from "../constants";
 import type { CausalityToken, Effect, InstigatorEffect } from "../types";
 
-const updateItemByEffect = (effect: Effect | InstigatorEffect, itemToUpdate: CausalityToken) => {
+const updateItemByEffect = (
+  effect: Effect | InstigatorEffect,
+  itemToUpdate: CausalityToken,
+) => {
   switch (effect.action) {
     case "appear": {
       itemToUpdate.visible = true;
@@ -25,8 +28,7 @@ const updateItemByEffect = (effect: Effect | InstigatorEffect, itemToUpdate: Cau
       const channel = effect.broadcast?.channel;
       const data = effect.broadcast?.data as string;
       const parsedData = JSON.parse(data);
-      const destination =
-        effect.broadcast?.destination || "REMOTE";
+      const destination = effect.broadcast?.destination || "REMOTE";
 
       if (channel && parsedData && destination) {
         OBR.broadcast.sendMessage(channel, parsedData, {
@@ -44,9 +46,12 @@ const updateItemByEffect = (effect: Effect | InstigatorEffect, itemToUpdate: Cau
       effect.tokenId = originalCauseTokenId;
     }
   }
-}
+};
 
-export const triggerEffectTokens = async (causalityID: string, instigatorEffects: InstigatorEffect[] = []) => {
+export const triggerEffectTokens = async (
+  causalityID: string,
+  instigatorEffects: InstigatorEffect[] = [],
+) => {
   await OBR.scene.items.updateItems(
     (item) => {
       const itemMetaData = (item as CausalityToken).metadata;
@@ -84,7 +89,10 @@ export const triggerEffectTokens = async (causalityID: string, instigatorEffects
               const cause = causality.cause;
               if (cause) {
                 cause.status = "Complete";
-                if (cause.instigatorEffects && cause.instigatorEffects.length > 0) {
+                if (
+                  cause.instigatorEffects &&
+                  cause.instigatorEffects.length > 0
+                ) {
                   for (const ie of cause.instigatorEffects) {
                     instigatorEffects.push(ie);
                   }

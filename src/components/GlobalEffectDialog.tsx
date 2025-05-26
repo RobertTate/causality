@@ -28,10 +28,17 @@ export const GlobalEffectDialog = () => {
     <Dialog.Root open={open}>
       <Dialog.Portal>
         <Dialog.Overlay className={styles["dialog-overlay"]} />
-        <Dialog.Content aria-describedby={undefined} className={styles["dialog-content"]}>
+        <Dialog.Content
+          aria-describedby={undefined}
+          className={styles["dialog-content"]}
+        >
           {causality && (
             <p className={styles["dialog-pre"]}>
-              When <img src={causality.cause?.imageUrl} alt={causality.cause?.name} />
+              When{" "}
+              <img
+                src={causality.cause?.imageUrl}
+                alt={causality.cause?.name}
+              />
               <strong>{causality.cause?.name}</strong>{" "}
               {causeTriggerTextMap[causality.cause?.trigger || "default"]}
             </p>
