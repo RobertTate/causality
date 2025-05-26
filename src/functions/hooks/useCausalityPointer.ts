@@ -6,66 +6,12 @@ import OBR, {
 } from "@owlbear-rodeo/sdk";
 import { useEffect } from "react";
 
-import { ID } from "../../constants";
-import { CausalityToken } from "../../types";
-import { getImageBoundingBox, intersect } from "../boundingBox";
+import { ID, underway } from "../../constants";
 import { useAppStore } from "./useAppStore";
+import { checkForCollisions } from "../checkForCollisions";
 
 export const useCausalityPointer = () => {
   const { collisionTokensRef } = useAppStore();
-
-  let underwayCollisions: { [key: string]: boolean } = {};
-
-  const checkForCollisions = (item: Image) => {
-    const currentTarget = item as CausalityToken;
-    const currentTargetID = item.id;
-    if (currentTarget) {
-      const tokensToCheck = collisionTokensRef.current;
-      tokensToCheck.forEach((cToken) => {
-        if (currentTarget.id !== cToken.id) {
-          const tokenBeingDraggedBB = getImageBoundingBox(currentTarget);
-          const tokenWithCollisionDetection = getImageBoundingBox(cToken);
-          if (tokenBeingDraggedBB && tokenWithCollisionDetection) {
-            const collisionHasOccured = intersect(
-              tokenBeingDraggedBB,
-              tokenWithCollisionDetection,
-            );
-            if (collisionHasOccured && !underwayCollisions[cToken.id]) {
-              underwayCollisions[cToken.id] = true;
-              OBR.scene.items.updateItems(
-                (item) => {
-                  return [cToken.id, currentTargetID].includes(item.id);
-                },
-                (items) => {
-                  const itemToUpdate = items.find((item) => item.id === cToken.id) as CausalityToken;
-                  const itemMetaData = itemToUpdate.metadata[ID];
-                  const causalities = itemMetaData.causalities;
-                  if (causalities && causalities.length > 0) {
-                    for (let causality of causalities) {
-                      const cause = causality.cause;
-                      if (cause) {
-                        if (cause.isCollided === false) {
-                          cause.isCollided = true;
-                          const instigatorEffects = cause.instigatorEffects;
-                          if (instigatorEffects && instigatorEffects.length > 0) {
-                            for (const ie of instigatorEffects) {
-                              const oldTokenID = ie.tokenId;
-                              ie.originalCauseTokenId = oldTokenID;
-                              ie.tokenId = currentTargetID;
-                            }
-                          }
-                        }
-                      }
-                    }
-                  }
-                },
-              );
-            }
-          }
-        }
-      });
-    }
-  };
 
   useEffect(() => {
     let dragCount = 0;
@@ -125,7 +71,7 @@ export const useCausalityPointer = () => {
               try {
                 const itemToUpdate = update((item) => {
                   item.position = ev.pointerPosition;
-                  checkForCollisions(item as Image);
+                  checkForCollisions(item as Image, collisionTokensRef);
                 });
                 dragCount++;
                 if (dragCount % 20 === 0) {
@@ -146,7 +92,7 @@ export const useCausalityPointer = () => {
                 console.warn(e);
                 stop();
                 interaction = "";
-                underwayCollisions = {};
+                underway.collisions = {};
               }
             }
           }
@@ -173,11 +119,11 @@ export const useCausalityPointer = () => {
                 );
                 stop();
                 interaction = "";
-                underwayCollisions = {};
+                underway.collisions = {};
               } catch (e) {
                 stop();
                 interaction = "";
-                underwayCollisions = {}
+                underway.collisions = {}
               }
             }
           }

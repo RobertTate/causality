@@ -46,8 +46,8 @@ const updateItemByEffect = (effect: Effect | InstigatorEffect, itemToUpdate: Cau
   }
 }
 
-export const triggerEffectTokens = (causalityID: string, instigatorEffects: InstigatorEffect[] = []) => {
-  OBR.scene.items.updateItems(
+export const triggerEffectTokens = async (causalityID: string, instigatorEffects: InstigatorEffect[] = []) => {
+  await OBR.scene.items.updateItems(
     (item) => {
       const itemMetaData = (item as CausalityToken).metadata;
       if (itemMetaData[ID]) {
@@ -74,8 +74,7 @@ export const triggerEffectTokens = (causalityID: string, instigatorEffects: Inst
     },
     (items) => {
       let instigatorEffects: InstigatorEffect[] = [];
-
-      for (let item of items) {
+      for (const item of items) {
         let itemToUpdate = item as CausalityToken;
         const causalityMetadata = itemToUpdate.metadata[ID];
         const causalities = causalityMetadata.causalities;

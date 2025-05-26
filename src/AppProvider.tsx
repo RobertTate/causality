@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AppContext } from "./AppContext";
 import { ID } from "./constants";
-import { triggerEffectTokens } from "./functions";
+import { triggerEffectTokens, hasCollisionOccured } from "./functions";
 import type {
   AppContextProps,
   AppProviderProps,
@@ -29,8 +29,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    const onItemsChange = () => {
+    const onItemsChange = async () => {
       OBR.scene.items.onChange(async (items) => {
+        const activeToolMode = await OBR.tool.getActiveToolMode();
+
         const causalityTokens = items.filter((item) => {
           const itemMetadata = item.metadata as CausalityTokenMetaData;
           const causalityMetaData = itemMetadata[ID];
@@ -58,7 +60,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                     case "appears": {
                       if (cToken.visible === true) {
                         setTimeout(
-                          () => triggerEffectTokens(causality.id),
+                          () => {
+                            return triggerEffectTokens(causality.id)
+                          },
                           Number(cause.delay),
                         );
                       }
@@ -67,7 +71,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                     case "disappears": {
                       if (cToken.visible === false) {
                         setTimeout(
-                          () => triggerEffectTokens(causality.id),
+                          () => {
+                            return triggerEffectTokens(causality.id)
+                          },
                           Number(cause.delay),
                         );
                       }
@@ -76,7 +82,9 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                     case "collision": {
                       if (cause.isCollided) {
                         setTimeout(
-                          () => triggerEffectTokens(causality.id, cause.instigatorEffects),
+                          () => {
+                            return triggerEffectTokens(causality.id, cause.instigatorEffects)
+                          },
                           Number(cause.delay),
                         );
                       }
@@ -85,6 +93,43 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                     }
                   }
                 }
+              }
+            }
+          }
+
+          // Logic for checking collisions if using the default move tool
+          if (activeToolMode === "rodeo.owlbear.tool-mode/move") {
+            const tokensToCheck = collisionTokensRef.current;
+            for (const tokenToCheck of tokensToCheck) {
+              if (cToken.id !== tokenToCheck.id && hasCollisionOccured(cToken, tokenToCheck)) {
+                await OBR.scene.items.updateItems(
+                  (item) => {
+                    return [tokenToCheck.id].includes(item.id);
+                  },
+                  (items) => {
+                    const itemToUpdate = items.find((item) => item.id === tokenToCheck.id) as CausalityToken;
+                    const itemMetaData = itemToUpdate.metadata[ID];
+                    const causalities = itemMetaData.causalities;
+                    if (causalities && causalities.length > 0) {
+                      for (let causality of causalities) {
+                        const cause = causality.cause;
+                        if (cause) {
+                          if (cause.isCollided === false) {
+                            cause.isCollided = true;
+                            const instigatorEffects = cause.instigatorEffects;
+                            if (instigatorEffects && instigatorEffects.length > 0) {
+                              for (const ie of instigatorEffects) {
+                                const oldTokenID = ie.tokenId;
+                                ie.originalCauseTokenId = oldTokenID;
+                                ie.tokenId = cToken.id;
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                );
               }
             }
           }
