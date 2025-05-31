@@ -38,7 +38,7 @@ Causality allows the GM of a room to orchestrate **cause** and **effect** relati
 
 <img src="./docs/Step5Trigger.gif" alt="Short Causality Demo" width="722">
 
-**IMPORTANT**: You MUST be using the **Causality Move Tool** in order for collisions to trigger.
+**IMPORTANT**: If you want a collision to trigger **while** you're moving a token, you must be using the **Causality Move Tool**.
 
 <img src="./docs/CausalityMoveTool.png" alt="Short Causality Demo" width="175">
 
