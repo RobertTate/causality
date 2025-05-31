@@ -126,3 +126,9 @@ export type BroadcastInputProps = {
   causality: Causality;
   effect: Effect;
 };
+
+export type CausalityLog = {
+  cause: Partial<Cause>;
+  effects: Partial<Effect>[];
+  logID: string;
+};

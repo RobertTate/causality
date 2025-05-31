@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import styles from "./App.module.css";
 import icon from "./assets/icon.svg";
 import info from "./assets/info.svg";
+import { CausalityLogManager } from "./components/CausalityLogManager";
 import { CausalityManager } from "./components/CausalityManager";
 import {
   useCausalityPointer,
@@ -58,7 +59,7 @@ function App() {
           <CausalityManager />
         </>
       ) : (
-        <>Not for you! Go away.</>
+        <CausalityLogManager />
       )}
     </main>
   );

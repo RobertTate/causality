@@ -1,7 +1,16 @@
 import OBR from "@owlbear-rodeo/sdk";
+import ShortUniqueId from "short-unique-id";
 
 import { ID } from "../constants";
-import type { CausalityToken, Effect, InstigatorEffect } from "../types";
+import type {
+  CausalityLog,
+  CausalityToken,
+  Cause,
+  Effect,
+  InstigatorEffect,
+} from "../types";
+
+const { randomUUID } = new ShortUniqueId({ length: 8 });
 
 const updateItemByEffect = (
   effect: Effect | InstigatorEffect,
@@ -52,6 +61,9 @@ export const triggerEffectTokens = async (
   causalityID: string,
   instigatorEffects: InstigatorEffect[] = [],
 ) => {
+  const logs: {
+    [key: string]: CausalityLog;
+  } = {};
   await OBR.scene.items.updateItems(
     (item) => {
       const itemMetaData = (item as CausalityToken).metadata;
@@ -78,7 +90,7 @@ export const triggerEffectTokens = async (
       return false;
     },
     (items) => {
-      let instigatorEffects: InstigatorEffect[] = [];
+      let instigatorArray: [Cause, InstigatorEffect][] = [];
       for (const item of items) {
         let itemToUpdate = item as CausalityToken;
         const causalityMetadata = itemToUpdate.metadata[ID];
@@ -86,6 +98,14 @@ export const triggerEffectTokens = async (
         if (causalities && causalities.length > 0) {
           for (const causality of causalities) {
             if (causality.id === causalityID) {
+              if (!logs[causality.id]) {
+                logs[causality.id] = {
+                  cause: {},
+                  effects: [],
+                  logID: "",
+                };
+              }
+
               const cause = causality.cause;
               if (cause) {
                 cause.status = "Complete";
@@ -94,14 +114,25 @@ export const triggerEffectTokens = async (
                   cause.instigatorEffects.length > 0
                 ) {
                   for (const ie of cause.instigatorEffects) {
-                    instigatorEffects.push(ie);
+                    instigatorArray.push([cause, ie]);
                   }
                 }
+                logs[causality.id].cause = {
+                  name: cause?.name,
+                  imageUrl: cause?.imageUrl,
+                  trigger: cause?.trigger,
+                };
               }
               const effects = causality.effects;
               if (effects && effects.length > 0) {
                 for (const effect of effects) {
                   updateItemByEffect(effect, itemToUpdate);
+                  logs[causality.id].effects.push({
+                    name: effect?.name,
+                    imageUrl: effect?.imageUrl,
+                    action: effect.action,
+                    effectId: effect.effectId,
+                  });
                 }
               }
             }
@@ -109,16 +140,41 @@ export const triggerEffectTokens = async (
         }
       }
 
-      if (instigatorEffects && instigatorEffects.length > 0) {
+      if (instigatorArray && instigatorArray.length > 0) {
         const triggeringItem = items.find((item) => {
-          return item.id === instigatorEffects[0].tokenId;
+          return item.id === instigatorArray[0][1].tokenId;
         }) as CausalityToken;
         if (triggeringItem) {
-          for (const ie of instigatorEffects) {
+          for (const ieArr of instigatorArray) {
+            const [cause, ie] = ieArr;
             updateItemByEffect(ie, triggeringItem);
+            if (!logs[triggeringItem.id]) {
+              logs[triggeringItem.id] = {
+                cause: {},
+                effects: [],
+                logID: "",
+              };
+            }
+            logs[triggeringItem.id].cause = {
+              name: cause?.name,
+              imageUrl: cause?.imageUrl,
+              trigger: cause?.trigger,
+            };
+            logs[triggeringItem.id].effects.push({
+              name: ie?.name,
+              imageUrl: ie?.imageUrl,
+              action: ie.action,
+              effectId: ie.effectId,
+            });
           }
         }
       }
     },
   );
+
+  Object.values(logs).forEach((log) => {
+    log.logID = randomUUID();
+  });
+
+  OBR.broadcast.sendMessage(`${ID}/log`, logs);
 };
