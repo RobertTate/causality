@@ -40,7 +40,7 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 0.25rem;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   letter-spacing: 0.5rem;
 }
@@ -150,4 +150,32 @@
   display: inline;
   font-size: 12px;
   margin-left: 0.25rem;
+}
+
+.collision-edit-area {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.collision-edit-buttton {
+  border: 1px solid #8447ff;
+  background-color: #4c396e;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.collision-edit-area-token-text img {
+  width: 40px;
+  height: 40px;
+  margin-right: 0.25rem;
+}
+
+.collision-edit-area-token-text {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
 }

@@ -43,11 +43,19 @@ export type InstigatorEffect = Effect & {
   originalCauseTokenId?: string;
 };
 
+export type TokenToTriggerCollision = {
+  name: string;
+  label: string;
+  id: string;
+  imageUrl: string;
+};
+
 export type Cause = TokenData & {
   trigger: CauseTrigger;
   status: CausalityStatus;
   delay: string;
   isCollided: boolean;
+  tokenToTriggerCollision?: TokenToTriggerCollision;
   instigatorEffects?: InstigatorEffect[];
 };
 
@@ -76,11 +84,20 @@ export type EffectDialogConfig = {
   activeEffectId?: string;
 };
 
+export type CollisionOptionsDialogConfig = {
+  open: boolean;
+  cause?: Cause;
+};
+
 export type AppContextProps = {
   tokens: CausalityToken[];
   collisionTokensRef: React.RefObject<CausalityToken[]>;
   effectDialog: EffectDialogConfig;
   updateEffectDialog: (effectDialog: EffectDialogConfig) => void;
+  collisionOptionsDialog: CollisionOptionsDialogConfig;
+  updateCollisionOptionsDialog: (
+    collisionOptionsDialog: CollisionOptionsDialogConfig,
+  ) => void;
 };
 
 export type AppProviderProps = {

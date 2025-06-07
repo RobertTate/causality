@@ -47,6 +47,14 @@ export const checkForCollisions = async (
                     const cause = causality.cause;
                     if (cause) {
                       if (cause.isCollided === false) {
+                        // Check if there's a scope of only 1 specific token that should be triggering the collision.
+                        if (
+                          cause.tokenToTriggerCollision?.id &&
+                          cause.tokenToTriggerCollision.id !== currentTargetID
+                        ) {
+                          return;
+                        }
+                        // Successful Collision!
                         cause.isCollided = true;
                         const instigatorEffects = cause.instigatorEffects;
                         if (instigatorEffects && instigatorEffects.length > 0) {

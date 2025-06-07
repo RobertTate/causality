@@ -63,7 +63,7 @@ export const CausalityLogManager = () => {
                       initial={{ y: -10 }}
                       animate={{ y: 0 }}
                       exit={{ y: 10 }}
-                      transition={{ duration: 0.5 }}
+                      transition={{ duration: 0.25 }}
                     >
                       <img
                         className={styles["log-content-cause-img"]}

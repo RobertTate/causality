@@ -9,6 +9,7 @@ import type {
   AppProviderProps,
   CausalityToken,
   CausalityTokenMetaData,
+  CollisionOptionsDialogConfig,
   EffectDialogConfig,
 } from "./types";
 
@@ -27,6 +28,23 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
       };
     });
   }, []);
+
+  const [collisionOptionsDialog, setCollisionOpttionsDialog] =
+    useState<CollisionOptionsDialogConfig>({
+      open: false,
+    });
+
+  const updateCollisionOptionsDialog = useCallback(
+    (collisionOptionsDialog: CollisionOptionsDialogConfig) => {
+      setCollisionOpttionsDialog((prev) => {
+        return {
+          ...prev,
+          ...collisionOptionsDialog,
+        };
+      });
+    },
+    [],
+  );
 
   useEffect(() => {
     const onItemsChange = async () => {
@@ -114,6 +132,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                         const cause = causality.cause;
                         if (cause) {
                           if (cause.isCollided === false) {
+                            // Check if there's a scope of only 1 specific token that should be triggering the collision.
+                            if (
+                              cause.tokenToTriggerCollision?.id &&
+                              cause.tokenToTriggerCollision.id !== cToken.id
+                            ) {
+                              return;
+                            }
+                            // Successful Collision!
                             cause.isCollided = true;
                             const instigatorEffects = cause.instigatorEffects;
                             if (
@@ -151,6 +177,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     collisionTokensRef,
     effectDialog,
     updateEffectDialog,
+    collisionOptionsDialog,
+    updateCollisionOptionsDialog,
   };
 
   return <AppContext.Provider value={store}>{children}</AppContext.Provider>;
