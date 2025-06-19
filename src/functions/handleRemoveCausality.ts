@@ -16,6 +16,13 @@ export const handleRemoveCausality = (c: Causality) => {
     });
   }
 
+  // Code to handle the migration of cause to causes. Can rip out after a few weeks/months probably.
+  // @ts-ignore:
+  if (c.cause && c.cause.tokenId) {
+    // @ts-ignore:
+    tokensToRemoveCausalityFrom.push(c.cause.tokenId);
+  }
+
   if (c.tokenId) {
     tokensToRemoveCausalityFrom.push(c.tokenId);
   }
