@@ -21,7 +21,7 @@ export const handleResetCausality = (c: Causality) => {
       return tokensToResetCausalityOn.includes(item.id);
     },
     (items) => {
-      for (let item of items) {
+      for (const item of items) {
         const itemToUpdate = item as CausalityToken;
         const causalityMetaData = itemToUpdate.metadata[ID];
         const causalities = causalityMetaData.causalities;

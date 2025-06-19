@@ -68,7 +68,7 @@ export const checkForCollisions = async (
                 const itemMetaData = itemToUpdate.metadata[ID];
                 const causalities = itemMetaData.causalities;
                 if (causalities && causalities.length > 0) {
-                  for (let causality of causalities) {
+                  for (const causality of causalities) {
                     const causes = (causality.causes || []).sort((a, b) =>
                       new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1,
                     );

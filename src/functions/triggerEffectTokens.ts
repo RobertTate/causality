@@ -90,9 +90,9 @@ export const triggerEffectTokens = async (
       return false;
     },
     (items) => {
-      let instigatorArray: [Cause, InstigatorEffect][] = [];
+      const instigatorArray: [Cause, InstigatorEffect][] = [];
       for (const item of items) {
-        let itemToUpdate = item as CausalityToken;
+        const itemToUpdate = item as CausalityToken;
         const causalityMetadata = itemToUpdate.metadata[ID];
         const causalities = causalityMetadata.causalities;
         if (causalities && causalities.length > 0) {

@@ -30,7 +30,7 @@ export const Effect = ({
         effect,
       });
     }
-  }, [causality, activeEffectId]);
+  }, [causality, activeEffectId, effect, open, updateEffectDialog]);
 
   const handleShowEffectDialog = () => {
     updateEffectDialog({

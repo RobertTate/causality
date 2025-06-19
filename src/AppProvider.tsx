@@ -53,7 +53,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   useEffect(() => {
     const onItemsChange = async () => {
       OBR.scene.items.onChange(async (items) => {
-        let collisionTokens: CausalityToken[] = [];
+        const collisionTokens: CausalityToken[] = [];
         const activeToolMode = await OBR.tool.getActiveToolMode();
 
         const causalityTokens = items.filter((item) => {
@@ -195,7 +195,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                     const itemMetaData = itemToUpdate.metadata[ID];
                     const causalities = itemMetaData.causalities;
                     if (causalities && causalities.length > 0) {
-                      for (let causality of causalities) {
+                      for (const causality of causalities) {
                         const causes = causality.causes || [];
                         for (const cause of causes) {
                           if (cause) {

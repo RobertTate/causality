@@ -41,7 +41,7 @@ export const useCausalityTokenSetterMenuContext = () => {
         onClick: async (context) => {
           if (isImage(context?.items?.[0])) {
             await OBR.scene.items.updateItems(context?.items, (images) => {
-              for (let image of images) {
+              for (const image of images) {
                 const selectedItem = image as CausalityToken;
                 if (
                   selectedItem?.metadata?.[ID]?.["isCausalityToken"] === true
@@ -86,7 +86,7 @@ export const useCausalityTokenSetterMenuContext = () => {
         onClick: async (context) => {
           if (isImage(context?.items?.[0])) {
             await OBR.scene.items.updateItems(context?.items, (images) => {
-              for (let image of images) {
+              for (const image of images) {
                 const selectedItem = image as CausalityToken;
                 if (selectedItem.visible === true) {
                   selectedItem.visible = false;
