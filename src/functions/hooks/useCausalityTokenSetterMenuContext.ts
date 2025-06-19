@@ -98,6 +98,7 @@ export const useCausalityTokenSetterMenuContext = () => {
                   causalities: [
                     {
                       id: uniqueCausalityId,
+                      tokenId: selectedItem.id,
                       timestamp,
                       causes: [
                         {
