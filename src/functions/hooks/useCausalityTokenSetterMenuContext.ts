@@ -41,7 +41,7 @@ export const useCausalityTokenSetterMenuContext = () => {
         onClick: async (context) => {
           if (isImage(context?.items?.[0])) {
             await OBR.scene.items.updateItems(context?.items, (images) => {
-              for (let image of images) {
+              for (const image of images) {
                 const selectedItem = image as CausalityToken;
                 if (
                   selectedItem?.metadata?.[ID]?.["isCausalityToken"] === true
@@ -86,33 +86,39 @@ export const useCausalityTokenSetterMenuContext = () => {
         onClick: async (context) => {
           if (isImage(context?.items?.[0])) {
             await OBR.scene.items.updateItems(context?.items, (images) => {
-              for (let image of images) {
+              for (const image of images) {
                 const selectedItem = image as CausalityToken;
                 if (selectedItem.visible === true) {
                   selectedItem.visible = false;
                 }
-                const uniqueKey = randomUUID();
+                const uniqueCausalityId = randomUUID();
+                const timestamp = new Date().toISOString();
                 selectedItem.metadata[ID] = {
                   isCausalityToken: true,
                   causalities: [
                     {
-                      id: uniqueKey,
-                      timestamp: new Date().toISOString(),
-                      cause: {
-                        status: "Pending",
-                        delay: "0",
-                        isCollided: false,
-                        tokenId: selectedItem.id,
-                        causalityId: uniqueKey,
-                        name: selectedItem.name,
-                        label: selectedItem.text?.plainText,
-                        imageUrl: selectedItem.image.url,
-                        trigger: "collision",
-                      },
+                      id: uniqueCausalityId,
+                      tokenId: selectedItem.id,
+                      timestamp,
+                      causes: [
+                        {
+                          status: "Pending",
+                          delay: "0",
+                          isCollided: false,
+                          tokenId: selectedItem.id,
+                          causalityId: uniqueCausalityId,
+                          name: selectedItem.name,
+                          label: selectedItem.text?.plainText,
+                          imageUrl: selectedItem.image.url,
+                          trigger: "collision",
+                          causeId: randomUUID(),
+                          timestamp,
+                        },
+                      ],
                       effects: [
                         {
                           tokenId: selectedItem.id,
-                          causalityId: uniqueKey,
+                          causalityId: uniqueCausalityId,
                           name: selectedItem.name,
                           label: selectedItem.text?.plainText,
                           imageUrl: selectedItem.image.url,
@@ -133,7 +139,11 @@ export const useCausalityTokenSetterMenuContext = () => {
     };
 
     OBR.onReady(() => {
-      setupContextMenu();
+      OBR.player.getRole().then((role) => {
+        if (role === "GM") {
+          setupContextMenu();
+        }
+      });
     });
   }, []);
 };

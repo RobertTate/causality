@@ -24,6 +24,8 @@ export const GlobalEffectDialog = () => {
     default: "does something...",
   };
 
+  const causes = causality?.causes;
+
   return (
     <Dialog.Root open={open}>
       <Dialog.Portal>
@@ -32,16 +34,19 @@ export const GlobalEffectDialog = () => {
           aria-describedby={undefined}
           className={styles["dialog-content"]}
         >
-          {causality && (
+          {causality && causes && causes.length === 1 ? (
             <p className={styles["dialog-pre"]}>
-              When{" "}
-              <img
-                src={causality.cause?.imageUrl}
-                alt={causality.cause?.name}
-              />
-              <strong>{causality.cause?.name}</strong>{" "}
-              {causeTriggerTextMap[causality.cause?.trigger || "default"]}
+              When <img src={causes[0]?.imageUrl} alt={causes[0]?.name} />
+              <strong>{causes[0]?.name}</strong>{" "}
+              {causeTriggerTextMap[causes[0]?.trigger || "default"]}
             </p>
+          ) : (
+            causes &&
+            causes.length > 1 && (
+              <p className={styles["dialog-pre"]}>
+                When all <strong>Cause</strong> conditions are met
+              </p>
+            )
           )}
 
           <Dialog.Title className={styles["dialog-title"]}>
@@ -74,7 +79,6 @@ export const GlobalEffectDialog = () => {
                   );
                 }}
                 value={effect.action || ""}
-                disabled={causality.cause?.status === "Complete" ? true : false}
               >
                 <option value="">-- Please choose an option --</option>
                 <option value="lock">Lock</option>

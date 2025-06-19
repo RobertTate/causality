@@ -1,10 +1,6 @@
-import {
-  BoundingBox,
-  Image,
-  Math2,
-  Shape,
-  buildShape,
-} from "@owlbear-rodeo/sdk";
+import { BoundingBox, Math2, Shape, buildShape } from "@owlbear-rodeo/sdk";
+
+import { BoundingBoxObject } from "../types";
 
 interface Rectangle extends Shape {
   shapeType: "RECTANGLE";
@@ -53,7 +49,7 @@ function getRectangleBoundingBox(rectangle: Rectangle) {
   return Math2.boundingBox(corners);
 }
 
-export function getImageBoundingBox(image: Image) {
+export function getImageBoundingBox(image: BoundingBoxObject) {
   if (!image.grid) return;
 
   const scaleDpi = 150 / image.grid.dpi;

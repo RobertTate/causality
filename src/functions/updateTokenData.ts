@@ -21,9 +21,11 @@ export const updateCauseTokenData = <K extends keyof Cause>(
           return causality.id === causalityID;
         });
         if (matchingCausality) {
-          const causeToken = matchingCausality.cause;
-          if (causeToken && causeToken.tokenId === tokenID) {
-            causeToken[propName] = propValue;
+          const causes = matchingCausality.causes || [];
+          for (const cause of causes) {
+            if (cause && cause.tokenId === tokenID) {
+              cause[propName] = propValue;
+            }
           }
         }
       }
@@ -51,8 +53,9 @@ export const updateEffectTokenData = <K extends keyof Effect>(
         });
         if (matchingCausality) {
           const effects = matchingCausality.effects;
-          const instigatorEffects = matchingCausality?.cause?.instigatorEffects;
-
+          const instigatorEffects = (matchingCausality.causes || []).flatMap(
+            (cause) => cause.instigatorEffects || [],
+          );
           const allEffects = instigatorEffects
             ? [...(effects || []), ...(instigatorEffects || [])]
             : effects;

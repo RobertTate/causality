@@ -17,6 +17,7 @@ export type EffectAction =
 export type CausalityStatus = "Pending" | "Complete";
 
 export type Destination = "REMOTE" | "LOCAL" | "ALL";
+export type CauseOperator = "AND" | "OR";
 
 export type Broadcast = {
   channel: string;
@@ -53,16 +54,20 @@ export type TokenToTriggerCollision = {
 export type Cause = TokenData & {
   trigger: CauseTrigger;
   status: CausalityStatus;
-  delay: string;
+  delay?: string;
+  timestamp: string;
+  causeId: string;
   isCollided: boolean;
   tokenToTriggerCollision?: TokenToTriggerCollision;
   instigatorEffects?: InstigatorEffect[];
+  operator?: CauseOperator;
 };
 
 export type Causality = {
   id: string;
+  tokenId: string;
   timestamp: string;
-  cause?: Cause;
+  causes?: Cause[];
   effects?: Effect[];
 };
 
@@ -91,6 +96,7 @@ export type CollisionOptionsDialogConfig = {
 
 export type AppContextProps = {
   tokens: CausalityToken[];
+  causalities: Causality[];
   collisionTokensRef: React.RefObject<CausalityToken[]>;
   effectDialog: EffectDialogConfig;
   updateEffectDialog: (effectDialog: EffectDialogConfig) => void;
@@ -108,8 +114,12 @@ export type CausalityManagerProps = {
   tokens: CausalityToken[];
 };
 
+export type CausalitiesProps = {
+  height: number;
+};
+
 export type TokenPoolProps = {
-  tokens: CausalityToken[];
+  height: number;
 };
 
 export type TokenProps = {
@@ -133,6 +143,12 @@ export type SortableProps = {
   id: string;
 };
 
+export type CauseProps = {
+  index: number;
+  causality: Causality;
+  cause: Cause;
+};
+
 export type EffectProps = {
   causality: Causality;
   effect: Effect | InstigatorEffect;
@@ -145,7 +161,34 @@ export type BroadcastInputProps = {
 };
 
 export type CausalityLog = {
-  cause: Partial<Cause>;
+  causes: Partial<Cause>[];
   effects: Partial<Effect>[];
   logID: string;
+};
+
+export type OperatorSwitchProps = {
+  cause: Cause;
+};
+
+export type BoundingBoxObject = {
+  grid: {
+    dpi: number;
+    offset: {
+      x: number;
+      y: number;
+    };
+  };
+  scale: {
+    x: number;
+    y: number;
+  };
+  rotation: number;
+  image: {
+    width: number;
+    height: number;
+  };
+  position: {
+    x: number;
+    y: number;
+  };
 };

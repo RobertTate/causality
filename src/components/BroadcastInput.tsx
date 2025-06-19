@@ -56,6 +56,7 @@ export const BroadcastInput = ({ causality, effect }: BroadcastInputProps) => {
       JSON.parse(newValue);
       setDataError(null);
       debouncedUpdateData(newValue);
+      // eslint-disable-next-line
     } catch (err: any) {
       setDataError(err.message);
     }

@@ -10,8 +10,10 @@ export const handleResetCausality = (c: Causality) => {
       tokensToResetCausalityOn.push(effect.tokenId);
     });
   }
-  if (c.cause) {
-    tokensToResetCausalityOn.push(c.cause.tokenId);
+  if (c.causes && c.causes.length > 0) {
+    c.causes.forEach((cause) => {
+      tokensToResetCausalityOn.push(cause.tokenId);
+    });
   }
 
   OBR.scene.items.updateItems(
@@ -19,18 +21,20 @@ export const handleResetCausality = (c: Causality) => {
       return tokensToResetCausalityOn.includes(item.id);
     },
     (items) => {
-      for (let item of items) {
+      for (const item of items) {
         const itemToUpdate = item as CausalityToken;
         const causalityMetaData = itemToUpdate.metadata[ID];
         const causalities = causalityMetaData.causalities;
         if (causalities && causalities.length > 0) {
           causalities.forEach((causality) => {
             if (causality.id === c.id) {
-              const cause = causality.cause;
-              if (cause) {
-                cause.status = "Pending";
-                if (cause.isCollided) {
-                  cause.isCollided = false;
+              const causes = causality.causes;
+              if (causes && causes.length > 0) {
+                for (const cause of causes) {
+                  cause.status = "Pending";
+                  if (cause.isCollided) {
+                    cause.isCollided = false;
+                  }
                 }
               }
             }

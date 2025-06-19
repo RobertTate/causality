@@ -80,7 +80,7 @@ export const useCausalityPointer = () => {
                       return item.id === itemToUpdate.id;
                     },
                     (items) => {
-                      for (let item of items) {
+                      for (const item of items) {
                         if (item.id === itemToUpdate.id) {
                           item.position = itemToUpdate.position;
                         }
@@ -110,7 +110,7 @@ export const useCausalityPointer = () => {
                     return item.id === itemToUpdate.id;
                   },
                   (items) => {
-                    for (let item of items) {
+                    for (const item of items) {
                       if (item.id === itemToUpdate.id) {
                         item.position = itemToUpdate.position;
                       }
@@ -121,6 +121,7 @@ export const useCausalityPointer = () => {
                 interaction = "";
                 underway.collisions = {};
               } catch (e) {
+                console.log(e);
                 stop();
                 interaction = "";
                 underway.collisions = {};
@@ -130,5 +131,5 @@ export const useCausalityPointer = () => {
         },
       });
     });
-  }, []);
+  }, [collisionTokensRef]);
 };

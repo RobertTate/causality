@@ -14,8 +14,8 @@ export const CausalityLogManager = () => {
       OBR.broadcast.onMessage(`${ID}/log`, (data) => {
         const newLogs = Object.values(data.data || []) as CausalityLog[];
         for (const log of newLogs) {
-          const { cause, effects } = log;
-          if (cause && effects && effects.length > 0) {
+          const { effects } = log;
+          if (effects && effects.length > 0) {
             setLogs((prev) => {
               return [log, ...prev];
             });
@@ -29,20 +29,13 @@ export const CausalityLogManager = () => {
     });
   }, []);
 
-  const triggerMap = {
-    collision: "was collided into",
-    appears: "appeared",
-    disappears: "disappeared",
-    default: "triggered",
-  };
-
   const actionMap = {
-    lock: "locking",
-    unlock: "unlocking",
-    appear: "appearing",
-    disappear: "disappearing",
-    broadcast: "broadcasting",
-    default: "triggering",
+    lock: "locked",
+    unlock: "unlocked",
+    appear: "appeared",
+    disappear: "disappeared",
+    broadcast: "broadcasted",
+    default: "triggerred",
   };
 
   return (
@@ -54,7 +47,7 @@ export const CausalityLogManager = () => {
             {logs && logs.length > 0 ? (
               <>
                 {logs.map((log) => {
-                  const { cause, effects, logID } = log;
+                  const { effects, logID } = log;
                   return effects.map((effect) => (
                     <motion.p
                       layout="position"
@@ -66,19 +59,12 @@ export const CausalityLogManager = () => {
                       transition={{ duration: 0.25 }}
                     >
                       <img
-                        className={styles["log-content-cause-img"]}
-                        src={cause.imageUrl}
-                        alt={cause.name}
-                      />
-                      <strong>{cause.name}</strong>&nbsp;
-                      <em>{triggerMap[cause.trigger || "default"]}</em>.{" "}
-                      <img
                         className={styles["log-content-effect-img"]}
                         src={effect.imageUrl}
                         alt={effect.name}
                       />{" "}
-                      <strong>{effect.name}</strong>&nbsp;responded by&nbsp;
-                      <em>{actionMap[effect.action || "default"]}</em>.
+                      <strong>{effect.name}</strong>&nbsp;
+                      <em>{actionMap[effect.action || "default"]}</em>.&nbsp;
                     </motion.p>
                   ));
                 })}

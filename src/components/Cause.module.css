@@ -1,0 +1,83 @@
+.cause {
+  display: flex;
+  position: relative;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 10px;
+  border: 1px solid #ae86ff;
+  background-color: #4c396e;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4);
+}
+
+.cause-delete {
+  position: absolute;
+  top: 4px;
+  right: 2px;
+  width: 17px;
+  height: 17px;
+  cursor: pointer;
+}
+
+.cause-when {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.cause-info {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.cause-image {
+  width: 50px;
+  height: 50px;
+  margin-right: 0.5rem;
+}
+
+.cause-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.cause-trigger-settings {
+  display: block;
+  width: 100%;
+}
+
+.cause-trigger-settings select {
+  width: 100%;
+  cursor: pointer;
+}
+
+.collision-edit-area {
+  display: flex;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.collision-edit-buttton {
+  border: 1px solid #8447ff;
+  background-color: #4c396e;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+  margin-right: 0.5rem;
+}
+
+.collision-edit-area-token-text img {
+  width: 40px;
+  height: 40px;
+  margin-right: 0.25rem;
+}
+
+.collision-edit-area-token-text {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+}

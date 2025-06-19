@@ -14,24 +14,31 @@ export const Droppable = ({ children, id }: DroppableProps) => {
     border: isOver ? "1px solid white" : "1px solid #8447ff",
     borderRadius: "10px",
     transition: "border-color 0.5s ease",
+    width: "100%",
+    boxShadow: isOver
+      ? "0px 0px 5px 0px rgb(255, 255, 255)"
+      : "0px 0px 5px 0px rgba(0, 0, 0, 0.2)",
   };
 
-  const effectsZoneStyles: CSSProperties = {
+  const causeAndEffectZoneStyles: CSSProperties = {
     display: "flex",
     flexDirection: "column",
-    justifyContent: "space-between",
-    backgroundColor: "#696969",
+    justifyContent: "flex-start",
+    backgroundColor: "#7a7a7a",
     flex: 1,
     padding: "0.5rem",
     marginLeft: "0.5rem",
     borderRadius: "10px",
     boxShadow: isOver
-      ? "3px 3px 2px 0px rgb(255, 255, 255)"
+      ? "0px 0px 5px 0px rgb(255, 255, 255)"
       : "3px 3px 2px 0px rgba(0, 0, 0, 0.2)",
-    transition: "box-shadow 0.5s ease",
+    border: isOver ? "1px solid white" : "1px solid transparent",
+
+    transition: "box-shadow 0.25s ease",
   };
 
-  const style = id === DROP_ZONE_ID ? causalityZoneStyles : effectsZoneStyles;
+  const style =
+    id === DROP_ZONE_ID ? causalityZoneStyles : causeAndEffectZoneStyles;
 
   return (
     <motion.div
@@ -40,8 +47,8 @@ export const Droppable = ({ children, id }: DroppableProps) => {
       initial={{ opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: 10 }}
-      transition={{ duration: 0.25 }}
-      layout
+      transition={{ duration: 0 }}
+      layout="position"
     >
       {children}
     </motion.div>
