@@ -1,12 +1,11 @@
 import OBR from "@owlbear-rodeo/sdk";
-
 import { ID } from "../constants";
 import type { CausalityToken } from "../types";
 
-export const handleRemoveEffect = (
+export const handleRemoveCause = (
   causalityID: string,
   tokenID: string,
-  effectID: string,
+  causeID: string,
 ) => {
   OBR.scene.items.updateItems(
     (item) => {
@@ -21,13 +20,13 @@ export const handleRemoveEffect = (
         });
         if (matchingCausalityIdx !== -1) {
           const matchingCausality = causalities[matchingCausalityIdx];
-          const effects = matchingCausality.effects;
-          if (effects && effects.length > 0) {
-            const matchingEffectIndex = effects?.findIndex((effect) => {
-              return effect.effectId === effectID;
+          const causes = matchingCausality.causes;
+          if (causes && causes.length > 0) {
+            const matchingCauseIndex = causes?.findIndex((cause) => {
+              return cause.causeId === causeID;
             });
-            if (matchingEffectIndex !== -1) {
-              effects.splice(matchingEffectIndex, 1);
+            if (matchingCauseIndex !== -1) {
+              causes.splice(matchingCauseIndex, 1);
             }
 
             // Cleanup to remove the causality on that token if it's empty.

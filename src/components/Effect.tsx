@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import fire from "../assets/fire.svg";
 import { handleRemoveEffect, updateCauseTokenData } from "../functions";
 import { useAppStore } from "../functions/hooks";
-import type { EffectProps } from "../types";
+import type { EffectProps, CausalityStatus } from "../types";
 import styles from "./Effect.module.css";
 
 export const Effect = ({
@@ -14,8 +14,9 @@ export const Effect = ({
 }: EffectProps) => {
   const { effectDialog, updateEffectDialog } = useAppStore();
   const { activeEffectId, open } = effectDialog;
-  const cause = causality.cause;
-  const isEditAllowed = causality.cause?.status === "Complete" ? false : true;
+  const causes = causality.causes;
+  const causalityStatus: CausalityStatus = causes?.every((cause) => cause.status === "Complete") ? "Complete" : "Pending";
+  const isEditAllowed = causalityStatus === "Complete" ? false : true;
 
   useEffect(() => {
     if (activeEffectId === effect.effectId && open) {
@@ -48,13 +49,13 @@ export const Effect = ({
     >
       <img
         onClick={() => {
-          if ("isInstigator" in effect && effect.isInstigator && cause) {
+          if ("isInstigator" in effect && effect.isInstigator && causes && causes.length > 0) {
             const newInstigatorEffects = instigatorEffects.filter((ie) => {
               return ie.effectId !== effect.effectId;
             });
             updateCauseTokenData(
               causality.id,
-              cause.tokenId,
+              causes[0].tokenId,
               "instigatorEffects",
               newInstigatorEffects,
             );
@@ -64,7 +65,7 @@ export const Effect = ({
         }}
         className={styles["effect-delete"]}
         src={fire}
-        alt="Delete Causality"
+        alt="Delete Effect"
       />
 
       <div className={styles["effect-info"]}>

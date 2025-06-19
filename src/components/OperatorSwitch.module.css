@@ -1,0 +1,36 @@
+.OperatorSwitch {
+  margin-bottom: 0.45rem;
+}
+
+.Root {
+	all: unset;
+	width: 42px;
+	height: 18px;
+	background-color: #2b1a47;
+	border: 1px solid #8447ff;
+	border-radius: 9999px;
+	position: relative;
+
+}
+
+.Thumb {
+	display: block;
+	width: 14px;
+	height: 14px;
+	background-color: #ae86ff;
+	border-radius: 9999px;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4);
+	transition: transform 100ms;
+	transform: translateX(2px);
+	will-change: transform;
+	&[data-state="checked"] {
+		transform: translateX(26px);
+	}
+}
+
+.Label {
+	font-size: 12px;
+  font-weight: 600;
+  text-shadow: 2px 2px 2px 0px rgba(0, 0, 0, 0.4);
+	user-select: none;
+}

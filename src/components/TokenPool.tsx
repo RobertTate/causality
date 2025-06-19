@@ -2,8 +2,9 @@ import { useAppStore } from "../functions/hooks";
 import { Token } from "./Token";
 import styles from "./TokenPool.module.css";
 import { Draggable } from "./dnd/Draggable";
+import type { TokenPoolProps } from "../types";
 
-export const TokenPool = () => {
+export const TokenPool = ({ height }: TokenPoolProps) => {
   const { tokens } = useAppStore();
 
   const populateTokenPool = () => {
@@ -27,7 +28,7 @@ export const TokenPool = () => {
 
   return (
     <section className={styles["tokenpool-section"]}>
-      <div className={styles["tokenpool-scroll-area"]}>
+      <div style={{ height: height }} className={styles["tokenpool-scroll-area"]}>
         <h2 className={styles["tokenpool-title"]}>Token Pool</h2>
         <div className={styles["tokenpool-token-area"]}>
           {populateTokenPool()}

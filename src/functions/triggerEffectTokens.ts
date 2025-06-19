@@ -100,28 +100,30 @@ export const triggerEffectTokens = async (
             if (causality.id === causalityID) {
               if (!logs[causality.id]) {
                 logs[causality.id] = {
-                  cause: {},
+                  causes: [],
                   effects: [],
                   logID: "",
                 };
               }
 
-              const cause = causality.cause;
-              if (cause) {
-                cause.status = "Complete";
-                if (
-                  cause.instigatorEffects &&
-                  cause.instigatorEffects.length > 0
-                ) {
-                  for (const ie of cause.instigatorEffects) {
-                    instigatorArray.push([cause, ie]);
+              const causes = causality.causes;
+              if (causes && causes.length > 0) {
+                for (const cause of causes) {
+                  cause.status = "Complete";
+                  if (
+                    cause.instigatorEffects &&
+                    cause.instigatorEffects.length > 0
+                  ) {
+                    for (const ie of cause.instigatorEffects) {
+                      instigatorArray.push([cause, ie]);
+                    }
                   }
+                  logs[causality.id].causes.push({
+                    name: cause?.name,
+                    imageUrl: cause?.imageUrl,
+                    trigger: cause?.trigger,
+                  });
                 }
-                logs[causality.id].cause = {
-                  name: cause?.name,
-                  imageUrl: cause?.imageUrl,
-                  trigger: cause?.trigger,
-                };
               }
               const effects = causality.effects;
               if (effects && effects.length > 0) {
@@ -150,16 +152,16 @@ export const triggerEffectTokens = async (
             updateItemByEffect(ie, triggeringItem);
             if (!logs[triggeringItem.id]) {
               logs[triggeringItem.id] = {
-                cause: {},
+                causes: [],
                 effects: [],
                 logID: "",
               };
             }
-            logs[triggeringItem.id].cause = {
+            logs[triggeringItem.id].causes.push({
               name: cause?.name,
               imageUrl: cause?.imageUrl,
               trigger: cause?.trigger,
-            };
+            });
             logs[triggeringItem.id].effects.push({
               name: ie?.name,
               imageUrl: ie?.imageUrl,

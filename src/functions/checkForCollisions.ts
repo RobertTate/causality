@@ -1,7 +1,7 @@
 import OBR, { type Image } from "@owlbear-rodeo/sdk";
 
 import { ID, underway } from "../constants";
-import { CausalityToken } from "../types";
+import { CausalityToken, BoundingBoxObject } from "../types";
 import { getImageBoundingBox, intersect } from "./boundingBox";
 
 export const hasCollisionOccured = (a: CausalityToken, b: CausalityToken) => {
@@ -20,10 +20,33 @@ export const checkForCollisions = async (
   const currentTarget = item as CausalityToken;
   const currentTargetID = item.id;
   const tokensToCheck = collisionTokensRef.current;
+  const boundingBoxCurrentTargetObject: BoundingBoxObject = {
+    grid: {
+      dpi: currentTarget.grid.dpi,
+      offset: {
+        x: currentTarget.grid.offset.x,
+        y: currentTarget.grid.offset.y,
+      }
+    },
+    scale: {
+      x: currentTarget.scale.x,
+      y: currentTarget.scale.y,
+    },
+    rotation: currentTarget.rotation,
+    image: {
+      width: currentTarget.image.width,
+      height: currentTarget.image.height,
+    },
+    position: {
+      x: currentTarget.position.x,
+      y: currentTarget.position.y,
+    },
+  }
+
   if (currentTarget) {
     for (const cToken of tokensToCheck) {
-      if (currentTarget.id !== cToken.id) {
-        const tokenBeingDraggedBB = getImageBoundingBox(currentTarget);
+      if (currentTargetID !== cToken.id) {
+        const tokenBeingDraggedBB = getImageBoundingBox(boundingBoxCurrentTargetObject);
         const tokenWithCollisionDetection = getImageBoundingBox(cToken);
         if (tokenBeingDraggedBB && tokenWithCollisionDetection) {
           const collisionHasOccured = intersect(
@@ -44,24 +67,26 @@ export const checkForCollisions = async (
                 const causalities = itemMetaData.causalities;
                 if (causalities && causalities.length > 0) {
                   for (let causality of causalities) {
-                    const cause = causality.cause;
-                    if (cause) {
-                      if (cause.isCollided === false) {
-                        // Check if there's a scope of only 1 specific token that should be triggering the collision.
-                        if (
-                          cause.tokenToTriggerCollision?.id &&
-                          cause.tokenToTriggerCollision.id !== currentTargetID
-                        ) {
-                          return;
-                        }
-                        // Successful Collision!
-                        cause.isCollided = true;
-                        const instigatorEffects = cause.instigatorEffects;
-                        if (instigatorEffects && instigatorEffects.length > 0) {
-                          for (const ie of instigatorEffects) {
-                            const oldTokenID = ie.tokenId;
-                            ie.originalCauseTokenId = oldTokenID;
-                            ie.tokenId = currentTargetID;
+                    const causes = (causality.causes || []).sort((a, b) => new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1);
+                    for (const cause of causes) {
+                      if (cause) {
+                        if (cause.isCollided === false) {
+                          // Check if there's a scope of only 1 specific token that should be triggering the collision.
+                          if (
+                            cause.tokenToTriggerCollision?.id &&
+                            cause.tokenToTriggerCollision.id !== currentTargetID
+                          ) {
+                            return;
+                          }
+                          // Successful Collision!
+                          cause.isCollided = true;
+                          const instigatorEffects = causes[0].instigatorEffects;
+                          if (instigatorEffects && instigatorEffects.length > 0) {
+                            for (const ie of instigatorEffects) {
+                              const oldTokenID = ie.tokenId;
+                              ie.originalCauseTokenId = oldTokenID;
+                              ie.tokenId = currentTargetID;
+                            }
                           }
                         }
                       }

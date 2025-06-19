@@ -1,78 +1,46 @@
-import { isArray, mergeWith } from "lodash";
 import { AnimatePresence, motion } from "motion/react";
 import { memo } from "react";
 import ShortUniqueId from "short-unique-id";
-
 import fire from "../assets/fire.svg";
 import reset from "../assets/reset.svg";
 import target from "../assets/target.svg";
 import timer from "../assets/timer.svg";
-import { DROP_ZONE_ID, ID } from "../constants";
+import { DROP_ZONE_ID } from "../constants";
 import {
   handleRemoveCausality,
   handleResetCausality,
   updateCauseTokenData,
 } from "../functions";
 import { useAppStore } from "../functions/hooks";
-import type { Causality, Cause, CauseTrigger } from "../types";
+import type { CauseTrigger, CausalityStatus, CausalitiesProps } from "../types";
 import styles from "./Causalities.module.css";
+import { Cause } from "./Cause";
 import { Effect } from "./Effect";
 import { Droppable } from "./dnd/Droppable";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
-export const Causalities = memo(() => {
-  const { tokens, updateCollisionOptionsDialog } = useAppStore();
-
-  const handleShowCollisionOptionsDialog = (cause: Cause) => {
-    updateCollisionOptionsDialog({
-      open: true,
-      cause,
-    });
-  };
-
+export const Causalities = memo(({ height }: CausalitiesProps) => {
+  const { causalities } = useAppStore();
   const populateCausalities = () => {
-    const causalities: { [id: string]: Causality } = {};
-
-    tokens.forEach((token) => {
-      const tokenCausalities = token.metadata[ID].causalities;
-
-      if (tokenCausalities && tokenCausalities.length > 0) {
-        tokenCausalities.forEach((tokenCausality) => {
-          if (causalities[tokenCausality.id]) {
-            causalities[tokenCausality.id] = mergeWith(
-              causalities[tokenCausality.id],
-              tokenCausality,
-              (objValue, srcValue) => {
-                if (isArray(objValue)) {
-                  return objValue.concat(srcValue);
-                }
-              },
-            );
-          } else {
-            causalities[tokenCausality.id] = tokenCausality;
-          }
-        });
-      }
-    });
-
-    const causalityDataArray = Object.values(causalities);
-    return causalityDataArray.length > 0 ? (
-      causalityDataArray
+    return causalities.length > 0 ? (
+      causalities
         .sort((a, b) => {
           return new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1;
         })
         .map((causality) => {
           const effectsIDSet = new Set();
-          const cause = causality.cause;
-          const instigatorEffects = cause?.instigatorEffects;
+          const causes = (causality.causes || []).sort((a, b) => new Date(a.timestamp) < new Date(b.timestamp) ? -1 : 1);
+          const instigatorEffects = (causes || []).flatMap((cause) => cause.instigatorEffects || []);
           const effects = causality.effects;
           const allEffects =
             instigatorEffects &&
-            instigatorEffects.length > 0 &&
-            cause.trigger === "collision"
+              instigatorEffects.length > 0 &&
+              causes?.some((cause) => cause.trigger === "collision")
               ? [...(effects || []), ...instigatorEffects]
-              : effects;
+              : effects || [];
+
+          const causalityStatus: CausalityStatus = causality.causes?.every((cause) => cause.status === "Complete") ? "Complete" : "Pending";
 
           return (
             <motion.div
@@ -83,7 +51,7 @@ export const Causalities = memo(() => {
               exit={{ opacity: 0, y: 10 }}
               transition={{ duration: 0.25 }}
               layout
-              data-status={causality.cause?.status}
+              data-status={causalityStatus}
             >
               <motion.div layout className={styles["causality-title-area"]}>
                 <motion.p layout>Causes</motion.p>
@@ -97,8 +65,8 @@ export const Causalities = memo(() => {
                 />
                 <motion.p layout className={styles["causality-status"]}>
                   Status:{" "}
-                  <span data-status={causality.cause?.status}>
-                    {causality.cause?.status}
+                  <span data-status={causalityStatus}>
+                    {causalityStatus}
                   </span>
                 </motion.p>
                 <motion.img
@@ -113,101 +81,21 @@ export const Causalities = memo(() => {
               </motion.div>
               <motion.div className={styles["causality-cause-effect-area"]}>
                 {/* CAUSE TOKEN AREA */}
-                {cause && (
-                  <motion.div
-                    className={styles["causality-cause"]}
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: 10 }}
-                    transition={{ duration: 0.25 }}
-                    layout
-                  >
-                    <motion.p layout className={styles["causality-cause-when"]}>
-                      When:
-                    </motion.p>
-                    <motion.div
-                      layout
-                      className={styles["causality-cause-info"]}
-                    >
-                      <motion.img
-                        layout
-                        className={styles["causality-cause-image"]}
-                        src={cause?.imageUrl}
-                        alt={cause?.name}
+                <Droppable id={`${causality.id}-causes`}>
+                  <>
+                    {causes && causes.length > 0 && causes.map((cause, index) => (
+                      <Cause
+                        cause={cause}
+                        causality={causality}
+                        key={cause.causeId}
+                        index={index}
                       />
-                      <motion.p
-                        layout
-                        className={styles["causality-cause-name"]}
-                      >
-                        {cause.name}
-                      </motion.p>
-                    </motion.div>
-                    <motion.div
-                      layout
-                      className={styles["causality-cause-trigger-settings"]}
-                    >
-                      <motion.select
-                        layout
-                        onChange={(event) => {
-                          return updateCauseTokenData(
-                            causality.id,
-                            cause.tokenId,
-                            "trigger",
-                            event.target.value as CauseTrigger,
-                          );
-                        }}
-                        name="cause-triggers"
-                        value={cause.trigger || ""}
-                        disabled={cause?.status === "Complete" ? true : false}
-                      >
-                        <option value="">-- Please choose an option --</option>
-                        <option value="collision">Is Collided Into</option>
-                        <option value="appears">Appears</option>
-                        <option value="disappears">Disappears</option>
-                      </motion.select>
-                      {cause.trigger === "collision" && (
-                        <div className={styles["collision-edit-area"]}>
-                          <button
-                            className={styles["collision-edit-buttton"]}
-                            onClick={() =>
-                              handleShowCollisionOptionsDialog(cause)
-                            }
-                            title={
-                              "Click here to assign a specific token to trigger the collision"
-                            }
-                            disabled={
-                              cause.status === "Complete" ? true : false
-                            }
-                          >
-                            By...
-                          </button>
-
-                          {cause.tokenToTriggerCollision?.name &&
-                          cause.tokenToTriggerCollision?.imageUrl ? (
-                            <p
-                              className={
-                                styles["collision-edit-area-token-text"]
-                              }
-                            >
-                              <img
-                                src={cause.tokenToTriggerCollision.imageUrl}
-                                alt={cause.tokenToTriggerCollision.name}
-                              />
-                              {cause.tokenToTriggerCollision.name}
-                              {cause.tokenToTriggerCollision.label
-                                ? ` / ${cause.tokenToTriggerCollision.label}`
-                                : ""}
-                            </p>
-                          ) : (
-                            <p>...any token</p>
-                          )}
-                        </div>
-                      )}
-                    </motion.div>
-                  </motion.div>
-                )}
+                    )
+                    )}
+                  </>
+                </Droppable>
                 {/* EFFECT TOKEN AREA */}
-                <Droppable id={causality.id}>
+                <Droppable id={`${causality.id}-effects`}>
                   {allEffects && allEffects.length > 0 ? (
                     <>
                       {allEffects.map((effect) => {
@@ -238,7 +126,7 @@ export const Causalities = memo(() => {
                   )}
 
                   <>
-                    {cause?.trigger === "collision" && (
+                    {causes?.some((cause) => cause.trigger === "collision") && (
                       <div>
                         <img
                           className={styles["causality-triggering-token-icon"]}
@@ -248,10 +136,10 @@ export const Causalities = memo(() => {
                           onClick={() => {
                             return updateCauseTokenData(
                               causality.id,
-                              cause.tokenId,
+                              causes[0].tokenId,
                               "instigatorEffects",
                               [
-                                ...(cause.instigatorEffects || []),
+                                ...(causes[0].instigatorEffects || []),
                                 {
                                   name: "The Triggering Token",
                                   label: "",
@@ -260,10 +148,10 @@ export const Causalities = memo(() => {
                                   action: "",
                                   isInstigator: true,
                                   causalityId: causality.id,
-                                  // Set the tokenID to the cause token, just until the collision occurs.
+                                  // Set the tokenID to the first cause token, just until the collision occurs.
                                   // It will then be updated to the token id for the token that actually
                                   // instigated a collision.
-                                  tokenId: cause.tokenId,
+                                  tokenId: causes[0].tokenId,
                                 },
                               ],
                             );
@@ -291,18 +179,18 @@ export const Causalities = memo(() => {
                       name="time-delay"
                       title="Set a time delay"
                       onChange={(event) => {
-                        if (causality.cause) {
+                        if (causes[0]) {
                           return updateCauseTokenData(
                             causality.id,
-                            causality.cause.tokenId,
+                            causes[0].tokenId,
                             "delay",
                             event.target.value as CauseTrigger,
                           );
                         }
                       }}
-                      value={causality.cause?.delay}
+                      value={causes[0]?.delay || "0"}
                       disabled={
-                        causality.cause?.status === "Complete" ? true : false
+                        causalityStatus === "Complete" ? true : false
                       }
                     >
                       {[
@@ -348,8 +236,7 @@ export const Causalities = memo(() => {
   return (
     <Droppable id={DROP_ZONE_ID}>
       <section className={styles["causalities-section"]}>
-        <div className={styles["causalities-scroll-area"]}>
-          <h2 className={styles["causalities-title"]}>Causalities</h2>
+        <div style={{ height: height }} className={styles["causalities-scroll-area"]}>
           <div className={styles["causalities-token-area"]}>
             <AnimatePresence>{populateCausalities()}</AnimatePresence>
           </div>

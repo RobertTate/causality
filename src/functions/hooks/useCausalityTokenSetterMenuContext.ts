@@ -91,28 +91,33 @@ export const useCausalityTokenSetterMenuContext = () => {
                 if (selectedItem.visible === true) {
                   selectedItem.visible = false;
                 }
-                const uniqueKey = randomUUID();
+                const uniqueCausalityId = randomUUID();
+                const timestamp = new Date().toISOString();
                 selectedItem.metadata[ID] = {
                   isCausalityToken: true,
                   causalities: [
                     {
-                      id: uniqueKey,
-                      timestamp: new Date().toISOString(),
-                      cause: {
-                        status: "Pending",
-                        delay: "0",
-                        isCollided: false,
-                        tokenId: selectedItem.id,
-                        causalityId: uniqueKey,
-                        name: selectedItem.name,
-                        label: selectedItem.text?.plainText,
-                        imageUrl: selectedItem.image.url,
-                        trigger: "collision",
-                      },
+                      id: uniqueCausalityId,
+                      timestamp,
+                      causes: [
+                        {
+                          status: "Pending",
+                          delay: "0",
+                          isCollided: false,
+                          tokenId: selectedItem.id,
+                          causalityId: uniqueCausalityId,
+                          name: selectedItem.name,
+                          label: selectedItem.text?.plainText,
+                          imageUrl: selectedItem.image.url,
+                          trigger: "collision",
+                          causeId: randomUUID(),
+                          timestamp,
+                        }
+                      ],
                       effects: [
                         {
                           tokenId: selectedItem.id,
-                          causalityId: uniqueKey,
+                          causalityId: uniqueCausalityId,
                           name: selectedItem.name,
                           label: selectedItem.text?.plainText,
                           imageUrl: selectedItem.image.url,
@@ -133,7 +138,11 @@ export const useCausalityTokenSetterMenuContext = () => {
     };
 
     OBR.onReady(() => {
-      setupContextMenu();
+      OBR.player.getRole().then((role) => {
+        if (role === "GM") {
+          setupContextMenu();
+        }
+      })
     });
   }, []);
 };

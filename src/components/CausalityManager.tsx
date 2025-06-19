@@ -13,10 +13,44 @@ import type { CausalityToken } from "../types";
 import { Causalities } from "./Causalities";
 import { Token } from "./Token";
 import { TokenPool } from "./TokenPool";
+import styles from "./CausalityManager.module.css";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
+const MIN_PANE = 0;
+
 export const CausalityManager = () => {
+  const [topH,    setTopH]    = useState(150);
+  const [bottomH, setBotH]    = useState(280);
+
+  const startResize = (e: React.PointerEvent<HTMLDivElement>) => {
+    // capture starting geometry
+    const startY   = e.clientY;
+    const startTop = topH;
+    const startBot = bottomH;
+
+    const onMove = (ev: PointerEvent) => {
+      const delta     = ev.clientY - startY;
+      let   newTop    = startTop + delta;
+      let   newBot    = startBot - delta;
+
+      // clamp so neither pane disappears
+      if (newTop < MIN_PANE)  { newTop = MIN_PANE;  newBot = startTop + startBot - newTop; }
+      if (newBot < MIN_PANE)  { newBot = MIN_PANE;  newTop = startTop + startBot - newBot; }
+
+      setTopH(newTop);
+      setBotH(newBot);
+    };
+
+    const onUp = () => {
+      window.removeEventListener("pointermove", onMove);
+      window.removeEventListener("pointerup", onUp);
+    };
+
+    window.addEventListener("pointermove", onMove);
+    window.addEventListener("pointerup", onUp);
+  };
+
   const [activeToken, setActiveToken] = useState<CausalityToken | null>(null);
 
   const handleDragStart = (event: DragStartEvent) => {
@@ -34,32 +68,40 @@ export const CausalityManager = () => {
         },
         (items) => {
           const itemToUpdate = items[0] as CausalityToken;
-          const uniqueKey = randomUUID();
+          const uniqueCausalityId = randomUUID();
+          const uniqueCauseId = randomUUID();
 
           if (!itemToUpdate.metadata[ID].causalities) {
             itemToUpdate.metadata[ID].causalities = [];
           }
 
+          const timestamp = new Date().toISOString();
+
           itemToUpdate.metadata[ID].causalities.unshift({
-            id: uniqueKey,
-            timestamp: new Date().toISOString(),
-            cause: {
-              status: "Pending",
-              delay: "0",
-              isCollided: false,
-              tokenId: itemToUpdate.id,
-              causalityId: uniqueKey,
-              name: itemToUpdate.name,
-              label: itemToUpdate.text?.plainText,
-              imageUrl: itemToUpdate.image.url,
-              trigger: "",
-            },
+            id: uniqueCausalityId,
+            tokenId: itemToUpdate.id,
+            timestamp,
+            causes: [
+              {
+                status: "Pending",
+                delay: "0",
+                isCollided: false,
+                tokenId: itemToUpdate.id,
+                causalityId: uniqueCausalityId,
+                name: itemToUpdate.name,
+                label: itemToUpdate.text?.plainText,
+                imageUrl: itemToUpdate.image.url,
+                trigger: "",
+                causeId: uniqueCauseId,
+                timestamp,
+              }
+            ],
           });
         },
       );
-    } else if (event.over?.id) {
+    } else if (((event.over?.id as string) || "").includes("effects")) {
       // Token was dragged into an effect token area
-      const causalityId = event.over.id as string;
+      const causalityId = (event.over?.id as string).split("-effects")[0];
       OBR.scene.items.updateItems(
         (item) => {
           return item.id === currentToken.id;
@@ -94,6 +136,7 @@ export const CausalityManager = () => {
           } else {
             itemToUpdate.metadata[ID].causalities.push({
               id: causalityId,
+              tokenId: itemToUpdate.id,
               timestamp: new Date().toISOString(),
               effects: [
                 {
@@ -110,13 +153,92 @@ export const CausalityManager = () => {
           }
         },
       );
+    } else if (((event.over?.id as string) || "").includes("causes")) {
+      const causalityId = (event.over?.id as string).split("-causes")[0];
+      OBR.scene.items.updateItems(
+        (item) => {
+          return item.id === currentToken.id;
+        },
+        (items) => {
+          const itemToUpdate = items[0] as CausalityToken;
+          if (!itemToUpdate.metadata[ID].causalities) {
+            itemToUpdate.metadata[ID].causalities = [];
+          }
+
+          const alreadyPresentCausality = itemToUpdate.metadata[
+            ID
+          ].causalities.find((causality) => {
+            return causality.id === causalityId;
+          });
+
+          const timestamp = new Date().toISOString();
+          const uniqueCauseId = randomUUID();
+
+          if (alreadyPresentCausality) {
+            if (!alreadyPresentCausality.causes) {
+              alreadyPresentCausality.causes = [];
+            }
+            alreadyPresentCausality.causes.push(
+              {
+                status: "Pending",
+                isCollided: false,
+                tokenId: itemToUpdate.id,
+                causalityId: alreadyPresentCausality.id,
+                name: itemToUpdate.name,
+                label: itemToUpdate.text?.plainText,
+                imageUrl: itemToUpdate.image.url,
+                trigger: "",
+                causeId: uniqueCauseId,
+                timestamp,
+                operator: "AND",
+              }
+            );
+          } else {
+            itemToUpdate.metadata[ID].causalities.push({
+              id: causalityId,
+              tokenId: itemToUpdate.id,
+              timestamp,
+              causes: [
+                {
+                  status: "Pending",
+                  isCollided: false,
+                  tokenId: itemToUpdate.id,
+                  causalityId: causalityId,
+                  name: itemToUpdate.name,
+                  label: itemToUpdate.text?.plainText,
+                  imageUrl: itemToUpdate.image.url,
+                  trigger: "",
+                  causeId: uniqueCauseId,
+                  timestamp,
+                  operator: "AND",
+                },
+              ],
+            });
+          }
+        }
+      );
     }
   };
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <TokenPool />
-      <Causalities />
+        <TokenPool height={topH} />
+        
+        <div
+          className={styles["causality-manager-resize"]}
+          onPointerDown={startResize}
+          style={{
+            height: "6px",
+            borderRadius: "9999px",
+            width: "60px",
+            margin: "auto",
+            cursor: "row-resize",
+            background: "white",
+            transform: "translateY(-15px)"
+          }}
+        />
+
+        <Causalities height={bottomH} />
       <DragOverlay>
         {activeToken && <Token isOverlay={true} token={activeToken} />}
       </DragOverlay>
