@@ -1,4 +1,5 @@
 import OBR from "@owlbear-rodeo/sdk";
+
 import { ID } from "../constants";
 import type { CausalityToken } from "../types";
 
@@ -32,7 +33,9 @@ export const handleRemoveCause = (
             // Cleanup to remove the causality on that token if it's empty.
             if (
               matchingCausality.effects?.length === 0 &&
-              (!matchingCausality.causes || (matchingCausality.causes && matchingCausality.causes.length === 0))
+              (!matchingCausality.causes ||
+                (matchingCausality.causes &&
+                  matchingCausality.causes.length === 0))
             ) {
               causalities.splice(matchingCausalityIdx, 1);
             }

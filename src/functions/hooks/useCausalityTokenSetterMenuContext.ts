@@ -112,7 +112,7 @@ export const useCausalityTokenSetterMenuContext = () => {
                           trigger: "collision",
                           causeId: randomUUID(),
                           timestamp,
-                        }
+                        },
                       ],
                       effects: [
                         {
@@ -142,7 +142,7 @@ export const useCausalityTokenSetterMenuContext = () => {
         if (role === "GM") {
           setupContextMenu();
         }
-      })
+      });
     });
   }, []);
 };

@@ -1,9 +1,5 @@
-import {
-  BoundingBox,
-  Math2,
-  Shape,
-  buildShape,
-} from "@owlbear-rodeo/sdk";
+import { BoundingBox, Math2, Shape, buildShape } from "@owlbear-rodeo/sdk";
+
 import { BoundingBoxObject } from "../types";
 
 interface Rectangle extends Shape {

@@ -36,20 +36,17 @@ export const GlobalEffectDialog = () => {
         >
           {causality && causes && causes.length === 1 ? (
             <p className={styles["dialog-pre"]}>
-              When{" "}
-              <img
-                src={causes[0]?.imageUrl}
-                alt={causes[0]?.name}
-              />
+              When <img src={causes[0]?.imageUrl} alt={causes[0]?.name} />
               <strong>{causes[0]?.name}</strong>{" "}
               {causeTriggerTextMap[causes[0]?.trigger || "default"]}
             </p>
-          ) : causes && causes.length > 1 && (
-            <p className={styles["dialog-pre"]}>
-              When all{" "}
-              <strong>Cause</strong>{" "}
-              conditions are met
-            </p>
+          ) : (
+            causes &&
+            causes.length > 1 && (
+              <p className={styles["dialog-pre"]}>
+                When all <strong>Cause</strong> conditions are met
+              </p>
+            )
           )}
 
           <Dialog.Title className={styles["dialog-title"]}>

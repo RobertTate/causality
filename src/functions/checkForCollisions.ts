@@ -1,7 +1,7 @@
 import OBR, { type Image } from "@owlbear-rodeo/sdk";
 
 import { ID, underway } from "../constants";
-import { CausalityToken, BoundingBoxObject } from "../types";
+import { BoundingBoxObject, CausalityToken } from "../types";
 import { getImageBoundingBox, intersect } from "./boundingBox";
 
 export const hasCollisionOccured = (a: CausalityToken, b: CausalityToken) => {
@@ -26,7 +26,7 @@ export const checkForCollisions = async (
       offset: {
         x: currentTarget.grid.offset.x,
         y: currentTarget.grid.offset.y,
-      }
+      },
     },
     scale: {
       x: currentTarget.scale.x,
@@ -41,12 +41,14 @@ export const checkForCollisions = async (
       x: currentTarget.position.x,
       y: currentTarget.position.y,
     },
-  }
+  };
 
   if (currentTarget) {
     for (const cToken of tokensToCheck) {
       if (currentTargetID !== cToken.id) {
-        const tokenBeingDraggedBB = getImageBoundingBox(boundingBoxCurrentTargetObject);
+        const tokenBeingDraggedBB = getImageBoundingBox(
+          boundingBoxCurrentTargetObject,
+        );
         const tokenWithCollisionDetection = getImageBoundingBox(cToken);
         if (tokenBeingDraggedBB && tokenWithCollisionDetection) {
           const collisionHasOccured = intersect(
@@ -67,7 +69,9 @@ export const checkForCollisions = async (
                 const causalities = itemMetaData.causalities;
                 if (causalities && causalities.length > 0) {
                   for (let causality of causalities) {
-                    const causes = (causality.causes || []).sort((a, b) => new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1);
+                    const causes = (causality.causes || []).sort((a, b) =>
+                      new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1,
+                    );
                     for (const cause of causes) {
                       if (cause) {
                         if (cause.isCollided === false) {
@@ -81,7 +85,10 @@ export const checkForCollisions = async (
                           // Successful Collision!
                           cause.isCollided = true;
                           const instigatorEffects = causes[0].instigatorEffects;
-                          if (instigatorEffects && instigatorEffects.length > 0) {
+                          if (
+                            instigatorEffects &&
+                            instigatorEffects.length > 0
+                          ) {
                             for (const ie of instigatorEffects) {
                               const oldTokenID = ie.tokenId;
                               ie.originalCauseTokenId = oldTokenID;

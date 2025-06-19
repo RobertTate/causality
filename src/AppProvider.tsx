@@ -1,7 +1,6 @@
 import OBR from "@owlbear-rodeo/sdk";
-import { useCallback, useEffect, useRef, useState } from "react";
 import { isArray, mergeWith } from "lodash";
-
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AppContext } from "./AppContext";
 import { ID } from "./constants";
@@ -9,10 +8,10 @@ import { hasCollisionOccured, triggerEffectTokens } from "./functions";
 import type {
   AppContextProps,
   AppProviderProps,
-  CausalityToken,
   Causality,
-  CauseOperator,
+  CausalityToken,
   CausalityTokenMetaData,
+  CauseOperator,
   CollisionOptionsDialogConfig,
   EffectDialogConfig,
 } from "./types";
@@ -97,41 +96,52 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         setCausalities(causalities);
 
         for (const causality of causalities) {
-          const causes = (causality.causes || []).sort((a, b) => new Date(a.timestamp) < new Date(b.timestamp) ? -1 : 1);
+          const causes = (causality.causes || []).sort((a, b) =>
+            new Date(a.timestamp) < new Date(b.timestamp) ? -1 : 1,
+          );
 
-          const causeConditionArray: [boolean, CauseOperator | undefined][] = causes.map((cause) => {
-            const tokenTiedToCause = causalityTokens.find((token) => token.id === cause.tokenId);
-            if (tokenTiedToCause && cause.trigger && cause.status === "Pending") {
-              switch (cause.trigger) {
-                case "appears": {
-                  if (tokenTiedToCause.visible === true) {
-                    return [true, cause.operator];
+          const causeConditionArray: [boolean, CauseOperator | undefined][] =
+            causes.map((cause) => {
+              const tokenTiedToCause = causalityTokens.find(
+                (token) => token.id === cause.tokenId,
+              );
+              if (
+                tokenTiedToCause &&
+                cause.trigger &&
+                cause.status === "Pending"
+              ) {
+                switch (cause.trigger) {
+                  case "appears": {
+                    if (tokenTiedToCause.visible === true) {
+                      return [true, cause.operator];
+                    }
+                    break;
                   }
-                  break;
-                }
-                case "disappears": {
-                  if (tokenTiedToCause.visible === false) {
-                    return [true, cause.operator];
+                  case "disappears": {
+                    if (tokenTiedToCause.visible === false) {
+                      return [true, cause.operator];
+                    }
+                    break;
                   }
-                  break;
-                }
-                case "collision": {
-                  if (!cause.isCollided) {
-                    collisionTokens.push(tokenTiedToCause);
-                  } else if (cause.isCollided) {
-                    return [true, cause.operator];
+                  case "collision": {
+                    if (!cause.isCollided) {
+                      collisionTokens.push(tokenTiedToCause);
+                    } else if (cause.isCollided) {
+                      return [true, cause.operator];
+                    }
+                    break;
                   }
-                  break;
-                }
-                default: {
-                  return [false, cause.operator];
+                  default: {
+                    return [false, cause.operator];
+                  }
                 }
               }
-            }
-            return [false, cause.operator];
-          });
+              return [false, cause.operator];
+            });
 
-          const areCauseConditionsMet = (causeConditionArray: [boolean, CauseOperator | undefined][]) => {
+          const areCauseConditionsMet = (
+            causeConditionArray: [boolean, CauseOperator | undefined][],
+          ) => {
             let areConditionsMet = causeConditionArray?.[0]?.[0];
 
             for (let i = 1; i < causeConditionArray.length; i++) {
@@ -147,7 +157,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
           };
 
           if (areCauseConditionsMet(causeConditionArray)) {
-            if (causes[0].instigatorEffects && causes[0].instigatorEffects.length > 0) {
+            if (
+              causes[0].instigatorEffects &&
+              causes[0].instigatorEffects.length > 0
+            ) {
               setTimeout(() => {
                 return triggerEffectTokens(
                   causality.id,

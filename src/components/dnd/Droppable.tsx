@@ -37,7 +37,8 @@ export const Droppable = ({ children, id }: DroppableProps) => {
     transition: "box-shadow 0.25s ease",
   };
 
-  const style = id === DROP_ZONE_ID ? causalityZoneStyles : causeAndEffectZoneStyles;
+  const style =
+    id === DROP_ZONE_ID ? causalityZoneStyles : causeAndEffectZoneStyles;
 
   return (
     <motion.div

@@ -63,7 +63,8 @@ export const CausalityLogManager = () => {
                         src={effect.imageUrl}
                         alt={effect.name}
                       />{" "}
-                      <strong>{effect.name}</strong>&nbsp;<em>{actionMap[effect.action || "default"]}</em>.&nbsp;
+                      <strong>{effect.name}</strong>&nbsp;
+                      <em>{actionMap[effect.action || "default"]}</em>.&nbsp;
                     </motion.p>
                   ));
                 })}

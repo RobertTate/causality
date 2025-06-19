@@ -1,6 +1,7 @@
 import { AnimatePresence, motion } from "motion/react";
 import { memo } from "react";
 import ShortUniqueId from "short-unique-id";
+
 import fire from "../assets/fire.svg";
 import reset from "../assets/reset.svg";
 import target from "../assets/target.svg";
@@ -12,7 +13,7 @@ import {
   updateCauseTokenData,
 } from "../functions";
 import { useAppStore } from "../functions/hooks";
-import type { CauseTrigger, CausalityStatus, CausalitiesProps } from "../types";
+import type { CausalitiesProps, CausalityStatus, CauseTrigger } from "../types";
 import styles from "./Causalities.module.css";
 import { Cause } from "./Cause";
 import { Effect } from "./Effect";
@@ -30,17 +31,25 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
         })
         .map((causality) => {
           const effectsIDSet = new Set();
-          const causes = (causality.causes || []).sort((a, b) => new Date(a.timestamp) < new Date(b.timestamp) ? -1 : 1);
-          const instigatorEffects = (causes || []).flatMap((cause) => cause.instigatorEffects || []);
+          const causes = (causality.causes || []).sort((a, b) =>
+            new Date(a.timestamp) < new Date(b.timestamp) ? -1 : 1,
+          );
+          const instigatorEffects = (causes || []).flatMap(
+            (cause) => cause.instigatorEffects || [],
+          );
           const effects = causality.effects;
           const allEffects =
             instigatorEffects &&
-              instigatorEffects.length > 0 &&
-              causes?.some((cause) => cause.trigger === "collision")
+            instigatorEffects.length > 0 &&
+            causes?.some((cause) => cause.trigger === "collision")
               ? [...(effects || []), ...instigatorEffects]
               : effects || [];
 
-          const causalityStatus: CausalityStatus = causality.causes?.every((cause) => cause.status === "Complete") ? "Complete" : "Pending";
+          const causalityStatus: CausalityStatus = causality.causes?.every(
+            (cause) => cause.status === "Complete",
+          )
+            ? "Complete"
+            : "Pending";
 
           return (
             <motion.div
@@ -65,9 +74,7 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                 />
                 <motion.p layout className={styles["causality-status"]}>
                   Status:{" "}
-                  <span data-status={causalityStatus}>
-                    {causalityStatus}
-                  </span>
+                  <span data-status={causalityStatus}>{causalityStatus}</span>
                 </motion.p>
                 <motion.img
                   layout
@@ -83,15 +90,16 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                 {/* CAUSE TOKEN AREA */}
                 <Droppable id={`${causality.id}-causes`}>
                   <>
-                    {causes && causes.length > 0 && causes.map((cause, index) => (
-                      <Cause
-                        cause={cause}
-                        causality={causality}
-                        key={cause.causeId}
-                        index={index}
-                      />
-                    )
-                    )}
+                    {causes &&
+                      causes.length > 0 &&
+                      causes.map((cause, index) => (
+                        <Cause
+                          cause={cause}
+                          causality={causality}
+                          key={cause.causeId}
+                          index={index}
+                        />
+                      ))}
                   </>
                 </Droppable>
                 {/* EFFECT TOKEN AREA */}
@@ -189,9 +197,7 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                         }
                       }}
                       value={causes[0]?.delay || "0"}
-                      disabled={
-                        causalityStatus === "Complete" ? true : false
-                      }
+                      disabled={causalityStatus === "Complete" ? true : false}
                     >
                       {[
                         ["0", "0s"],
@@ -236,7 +242,10 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
   return (
     <Droppable id={DROP_ZONE_ID}>
       <section className={styles["causalities-section"]}>
-        <div style={{ height: height }} className={styles["causalities-scroll-area"]}>
+        <div
+          style={{ height: height }}
+          className={styles["causalities-scroll-area"]}
+        >
           <div className={styles["causalities-token-area"]}>
             <AnimatePresence>{populateCausalities()}</AnimatePresence>
           </div>

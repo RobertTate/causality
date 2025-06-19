@@ -1,11 +1,11 @@
 import { motion } from "motion/react";
-import { updateCauseTokenData, handleRemoveCause } from "../functions";
-import { useAppStore } from "../functions/hooks";
-import { OperatorSwitch } from "./OperatorSwitch";
-import type { Cause as CauseType, CauseProps, CauseTrigger } from "../types";
-import styles from "./Cause.module.css";
-import fire from "../assets/fire.svg";
 
+import fire from "../assets/fire.svg";
+import { handleRemoveCause, updateCauseTokenData } from "../functions";
+import { useAppStore } from "../functions/hooks";
+import type { CauseProps, CauseTrigger, Cause as CauseType } from "../types";
+import styles from "./Cause.module.css";
+import { OperatorSwitch } from "./OperatorSwitch";
 
 export const Cause = ({ cause, causality, index }: CauseProps) => {
   const { updateCollisionOptionsDialog } = useAppStore();
@@ -44,27 +44,18 @@ export const Cause = ({ cause, causality, index }: CauseProps) => {
         <motion.p layout className={styles["cause-when"]}>
           When:
         </motion.p>
-        <motion.div
-          layout
-          className={styles["cause-info"]}
-        >
+        <motion.div layout className={styles["cause-info"]}>
           <motion.img
             layout
             className={styles["cause-image"]}
             src={cause?.imageUrl}
             alt={cause?.name}
           />
-          <motion.p
-            layout
-            className={styles["cause-name"]}
-          >
+          <motion.p layout className={styles["cause-name"]}>
             {cause.name}
           </motion.p>
         </motion.div>
-        <motion.div
-          layout
-          className={styles["cause-trigger-settings"]}
-        >
+        <motion.div layout className={styles["cause-trigger-settings"]}>
           <motion.select
             layout
             onChange={(event) => {
@@ -88,26 +79,18 @@ export const Cause = ({ cause, causality, index }: CauseProps) => {
             <div className={styles["collision-edit-area"]}>
               <button
                 className={styles["collision-edit-buttton"]}
-                onClick={() =>
-                  handleShowCollisionOptionsDialog(cause)
-                }
+                onClick={() => handleShowCollisionOptionsDialog(cause)}
                 title={
                   "Click here to assign a specific token to trigger the collision"
                 }
-                disabled={
-                  cause.status === "Complete" ? true : false
-                }
+                disabled={cause.status === "Complete" ? true : false}
               >
                 By...
               </button>
 
               {cause.tokenToTriggerCollision?.name &&
-                cause.tokenToTriggerCollision?.imageUrl ? (
-                <p
-                  className={
-                    styles["collision-edit-area-token-text"]
-                  }
-                >
+              cause.tokenToTriggerCollision?.imageUrl ? (
+                <p className={styles["collision-edit-area-token-text"]}>
                   <img
                     src={cause.tokenToTriggerCollision.imageUrl}
                     alt={cause.tokenToTriggerCollision.name}
@@ -125,5 +108,5 @@ export const Cause = ({ cause, causality, index }: CauseProps) => {
         </motion.div>
       </motion.div>
     </>
-  )
-}
+  );
+};

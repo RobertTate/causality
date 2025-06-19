@@ -33,7 +33,9 @@ export const handleRemoveEffect = (
             // Cleanup to remove the causality on that token if it's empty.
             if (
               matchingCausality.effects?.length === 0 &&
-              (!matchingCausality.causes || (matchingCausality.causes && matchingCausality.causes.length === 0))
+              (!matchingCausality.causes ||
+                (matchingCausality.causes &&
+                  matchingCausality.causes.length === 0))
             ) {
               causalities.splice(matchingCausalityIdx, 1);
             }

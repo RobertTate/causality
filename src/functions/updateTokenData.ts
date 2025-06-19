@@ -53,7 +53,9 @@ export const updateEffectTokenData = <K extends keyof Effect>(
         });
         if (matchingCausality) {
           const effects = matchingCausality.effects;
-          const instigatorEffects = (matchingCausality.causes || []).flatMap((cause) => cause.instigatorEffects || []);
+          const instigatorEffects = (matchingCausality.causes || []).flatMap(
+            (cause) => cause.instigatorEffects || [],
+          );
           const allEffects = instigatorEffects
             ? [...(effects || []), ...(instigatorEffects || [])]
             : effects;

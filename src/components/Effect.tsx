@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import fire from "../assets/fire.svg";
 import { handleRemoveEffect, updateCauseTokenData } from "../functions";
 import { useAppStore } from "../functions/hooks";
-import type { EffectProps, CausalityStatus } from "../types";
+import type { CausalityStatus, EffectProps } from "../types";
 import styles from "./Effect.module.css";
 
 export const Effect = ({
@@ -15,7 +15,11 @@ export const Effect = ({
   const { effectDialog, updateEffectDialog } = useAppStore();
   const { activeEffectId, open } = effectDialog;
   const causes = causality.causes;
-  const causalityStatus: CausalityStatus = causes?.every((cause) => cause.status === "Complete") ? "Complete" : "Pending";
+  const causalityStatus: CausalityStatus = causes?.every(
+    (cause) => cause.status === "Complete",
+  )
+    ? "Complete"
+    : "Pending";
   const isEditAllowed = causalityStatus === "Complete" ? false : true;
 
   useEffect(() => {
@@ -49,7 +53,12 @@ export const Effect = ({
     >
       <img
         onClick={() => {
-          if ("isInstigator" in effect && effect.isInstigator && causes && causes.length > 0) {
+          if (
+            "isInstigator" in effect &&
+            effect.isInstigator &&
+            causes &&
+            causes.length > 0
+          ) {
             const newInstigatorEffects = instigatorEffects.filter((ie) => {
               return ie.effectId !== effect.effectId;
             });

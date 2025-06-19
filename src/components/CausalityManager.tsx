@@ -11,32 +11,38 @@ import ShortUniqueId from "short-unique-id";
 import { DROP_ZONE_ID, ID } from "../constants";
 import type { CausalityToken } from "../types";
 import { Causalities } from "./Causalities";
+import styles from "./CausalityManager.module.css";
 import { Token } from "./Token";
 import { TokenPool } from "./TokenPool";
-import styles from "./CausalityManager.module.css";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
 const MIN_PANE = 0;
 
 export const CausalityManager = () => {
-  const [topH,    setTopH]    = useState(150);
-  const [bottomH, setBotH]    = useState(280);
+  const [topH, setTopH] = useState(150);
+  const [bottomH, setBotH] = useState(280);
 
   const startResize = (e: React.PointerEvent<HTMLDivElement>) => {
     // capture starting geometry
-    const startY   = e.clientY;
+    const startY = e.clientY;
     const startTop = topH;
     const startBot = bottomH;
 
     const onMove = (ev: PointerEvent) => {
-      const delta     = ev.clientY - startY;
-      let   newTop    = startTop + delta;
-      let   newBot    = startBot - delta;
+      const delta = ev.clientY - startY;
+      let newTop = startTop + delta;
+      let newBot = startBot - delta;
 
       // clamp so neither pane disappears
-      if (newTop < MIN_PANE)  { newTop = MIN_PANE;  newBot = startTop + startBot - newTop; }
-      if (newBot < MIN_PANE)  { newBot = MIN_PANE;  newTop = startTop + startBot - newBot; }
+      if (newTop < MIN_PANE) {
+        newTop = MIN_PANE;
+        newBot = startTop + startBot - newTop;
+      }
+      if (newBot < MIN_PANE) {
+        newBot = MIN_PANE;
+        newTop = startTop + startBot - newBot;
+      }
 
       setTopH(newTop);
       setBotH(newBot);
@@ -94,7 +100,7 @@ export const CausalityManager = () => {
                 trigger: "",
                 causeId: uniqueCauseId,
                 timestamp,
-              }
+              },
             ],
           });
         },
@@ -178,21 +184,19 @@ export const CausalityManager = () => {
             if (!alreadyPresentCausality.causes) {
               alreadyPresentCausality.causes = [];
             }
-            alreadyPresentCausality.causes.push(
-              {
-                status: "Pending",
-                isCollided: false,
-                tokenId: itemToUpdate.id,
-                causalityId: alreadyPresentCausality.id,
-                name: itemToUpdate.name,
-                label: itemToUpdate.text?.plainText,
-                imageUrl: itemToUpdate.image.url,
-                trigger: "",
-                causeId: uniqueCauseId,
-                timestamp,
-                operator: "AND",
-              }
-            );
+            alreadyPresentCausality.causes.push({
+              status: "Pending",
+              isCollided: false,
+              tokenId: itemToUpdate.id,
+              causalityId: alreadyPresentCausality.id,
+              name: itemToUpdate.name,
+              label: itemToUpdate.text?.plainText,
+              imageUrl: itemToUpdate.image.url,
+              trigger: "",
+              causeId: uniqueCauseId,
+              timestamp,
+              operator: "AND",
+            });
           } else {
             itemToUpdate.metadata[ID].causalities.push({
               id: causalityId,
@@ -215,30 +219,30 @@ export const CausalityManager = () => {
               ],
             });
           }
-        }
+        },
       );
     }
   };
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <TokenPool height={topH} />
-        
-        <div
-          className={styles["causality-manager-resize"]}
-          onPointerDown={startResize}
-          style={{
-            height: "6px",
-            borderRadius: "9999px",
-            width: "60px",
-            margin: "auto",
-            cursor: "row-resize",
-            background: "white",
-            transform: "translateY(-15px)"
-          }}
-        />
+      <TokenPool height={topH} />
 
-        <Causalities height={bottomH} />
+      <div
+        className={styles["causality-manager-resize"]}
+        onPointerDown={startResize}
+        style={{
+          height: "6px",
+          borderRadius: "9999px",
+          width: "60px",
+          margin: "auto",
+          cursor: "row-resize",
+          background: "white",
+          transform: "translateY(-15px)",
+        }}
+      />
+
+      <Causalities height={bottomH} />
       <DragOverlay>
         {activeToken && <Token isOverlay={true} token={activeToken} />}
       </DragOverlay>

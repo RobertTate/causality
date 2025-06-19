@@ -1,4 +1,4 @@
-import { Image, ImageGrid, ImageContent, Vector2 } from "@owlbear-rodeo/sdk";
+import { Image } from "@owlbear-rodeo/sdk";
 import type { ReactElement } from "react";
 import React from "react";
 
@@ -116,7 +116,7 @@ export type CausalityManagerProps = {
 
 export type CausalitiesProps = {
   height: number;
-}
+};
 
 export type TokenPoolProps = {
   height: number;
@@ -147,7 +147,7 @@ export type CauseProps = {
   index: number;
   causality: Causality;
   cause: Cause;
-}
+};
 
 export type EffectProps = {
   causality: Causality;
@@ -172,23 +172,23 @@ export type OperatorSwitchProps = {
 
 export type BoundingBoxObject = {
   grid: {
-    dpi: number
+    dpi: number;
     offset: {
-      x: number,
-      y: number,
-    }
-  }
+      x: number;
+      y: number;
+    };
+  };
   scale: {
-    x: number,
-    y: number,
-  },
-  rotation: number,
+    x: number;
+    y: number;
+  };
+  rotation: number;
   image: {
-    width: number,
-    height: number,
-  },
+    width: number;
+    height: number;
+  };
   position: {
-    x: number,
-    y: number,
-  },
-}
+    x: number;
+    y: number;
+  };
+};
