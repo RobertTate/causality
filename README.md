@@ -70,10 +70,10 @@ A **causality** can have more than one cause. All or some (depending on whether 
 ## FAQ
 
 **Collisions don’t fire while I drag a token**  
-Make sure you’ve selected the **Causality Move Tool** (you can hit C on your keyboard as a shortcut to get to it). Collisions only update during movement when this tool is in use.
+- Make sure you’ve selected the **Causality Move Tool** (you can hit C on your keyboard as a shortcut to get to it). Collisions only update during movement when this tool is in use.
 
 **My token still isn't triggering a collision**  
-Even if that token isn't connected to a cause or effect, it must still first be added to Causality before it can be used to trigger collisions.
+- Even if that token isn't connected to a cause or effect, it must still first be added to Causality before it can be used to trigger collisions.
 
 <br />
 
