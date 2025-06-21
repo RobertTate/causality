@@ -41,7 +41,9 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
           const allEffects =
             instigatorEffects &&
             instigatorEffects.length > 0 &&
-            causes?.some((cause) => cause.trigger === "collision")
+            causes?.some((cause) =>
+              ["collision", "covers"].includes(cause.trigger),
+            )
               ? [...(effects || []), ...instigatorEffects]
               : effects || [];
 
@@ -134,13 +136,15 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                   )}
 
                   <>
-                    {causes?.some((cause) => cause.trigger === "collision") && (
+                    {causes?.some((cause) =>
+                      ["collision", "covers"].includes(cause.trigger),
+                    ) && (
                       <div>
                         <img
                           className={styles["causality-triggering-token-icon"]}
                           src={target}
                           alt="Triggering Token Icon"
-                          title="Add an effect on whichever token triggers this collision"
+                          title="Add an effect on whichever token triggers this collision or covering"
                           onClick={() => {
                             return updateCauseTokenData(
                               causality.id,
@@ -227,13 +231,13 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
         key="emptyDisclaimer"
         layout="position"
         style={{
-          maxWidth: "355px",
+          maxWidth: "270px",
         }}
       >
         <em>
           Drag tokens here from your <strong>token pool</strong> to create a new
-          "Causality", adding them as the "Cause". When a "Cause" condition is
-          met, each associated "Effect" is triggered.
+          "Causality", adding them as "Causes". When all "Cause" conditiona are
+          met for a "Causalitty", its "Effects" are triggered.
         </em>
       </motion.p>
     );

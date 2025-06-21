@@ -123,9 +123,19 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
                     }
                     break;
                   }
+                  case "covers": {
+                    collisionTokens.push(tokenTiedToCause);
+                    if (!cause.isCollided) {
+                      return [false, cause.operator];
+                    } else if (cause.isCollided) {
+                      return [true, cause.operator];
+                    }
+                    break;
+                  }
                   case "collision": {
                     if (!cause.isCollided) {
                       collisionTokens.push(tokenTiedToCause);
+                      return [false, cause.operator];
                     } else if (cause.isCollided) {
                       return [true, cause.operator];
                     }
