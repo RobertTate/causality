@@ -19,6 +19,7 @@ export const GlobalEffectDialog = () => {
 
   const causeTriggerTextMap = {
     collision: "is collided into...",
+    covers: "is covered...",
     appears: "appears...",
     disappears: "disappears...",
     default: "does something...",

@@ -72,10 +72,11 @@ export const Cause = ({ cause, causality, index }: CauseProps) => {
           >
             <option value="">-- Please choose an option --</option>
             <option value="collision">Is Collided Into</option>
+            <option value="covers">Is Covered</option>
             <option value="appears">Appears</option>
             <option value="disappears">Disappears</option>
           </motion.select>
-          {cause.trigger === "collision" && (
+          {["collision", "covers"].includes(cause.trigger) && (
             <div className={styles["collision-edit-area"]}>
               <button
                 className={styles["collision-edit-buttton"]}

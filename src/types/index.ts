@@ -6,7 +6,12 @@ import { ID } from "../constants";
 
 export type Role = "GM" | "PLAYER" | undefined;
 
-export type CauseTrigger = "collision" | "appears" | "disappears" | "";
+export type CauseTrigger =
+  | "collision"
+  | "covers"
+  | "appears"
+  | "disappears"
+  | "";
 export type EffectAction =
   | "lock"
   | "unlock"

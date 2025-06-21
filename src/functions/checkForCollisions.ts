@@ -55,7 +55,40 @@ export const checkForCollisions = async (
             tokenBeingDraggedBB,
             tokenWithCollisionDetection,
           );
-          if (collisionHasOccured && !underway.collisions[cToken.id]) {
+
+          if (!collisionHasOccured && underway.collisions[cToken.id]) {
+            underway.collisions[cToken.id] = false;
+            await OBR.scene.items.updateItems(
+              (item) => {
+                return [cToken.id].includes(item.id);
+              },
+              (items) => {
+                const itemToUpdate = items.find(
+                  (item) => item.id === cToken.id,
+                ) as CausalityToken;
+                const itemMetaData = itemToUpdate.metadata[ID];
+                const causalities = itemMetaData.causalities;
+                if (causalities && causalities.length > 0) {
+                  for (const causality of causalities) {
+                    const causes = (causality.causes || []).sort((a, b) =>
+                      new Date(a.timestamp) < new Date(b.timestamp) ? 1 : -1,
+                    );
+                    for (const cause of causes) {
+                      if (cause) {
+                        if (
+                          cause.isCollided === true &&
+                          cause.trigger === "covers"
+                        ) {
+                          console.log("MOVED OFF!");
+                          cause.isCollided = false;
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+            );
+          } else if (collisionHasOccured && !underway.collisions[cToken.id]) {
             underway.collisions[cToken.id] = true;
             await OBR.scene.items.updateItems(
               (item) => {
@@ -83,6 +116,7 @@ export const checkForCollisions = async (
                             return;
                           }
                           // Successful Collision!
+                          console.log("MOVED ON!");
                           cause.isCollided = true;
                           const instigatorEffects = causes[0].instigatorEffects;
                           if (
