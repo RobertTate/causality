@@ -1,8 +1,9 @@
-export { handleRemoveCausality } from "./handleRemoveCausality";
-export { updateCauseTokenData, updateEffectTokenData } from "./updateTokenData";
-export { handleRemoveEffect } from "./handleRemoveEffect";
-export { handleRemoveCause } from "./handleRemoveCause";
-export { handleResetCausality } from "./handleResetCausality";
+export { removeCausality } from "./removeCausality";
+export { updateCauseData, updateEffectData, updateCausalityData } from "./updateTokenData";
+export { removeEffect } from "./removeEffect";
+export { removeCause } from "./removeCause";
+export { resetCausality } from "./resetCausality";
 export { triggerEffectTokens } from "./triggerEffectTokens";
 export { getImageBoundingBox } from "./boundingBox";
 export { checkForCollisions, hasCollisionOccured } from "./checkForCollisions";
+export { resetAllCausalities } from "./resetAllCausalities";

@@ -6,23 +6,27 @@ import fire from "../assets/fire.svg";
 import reset from "../assets/reset.svg";
 import target from "../assets/target.svg";
 import timer from "../assets/timer.svg";
+import edit from "../assets/edit.svg";
+import ok from "../assets/ok.svg";
 import { DROP_ZONE_ID } from "../constants";
 import {
-  handleRemoveCausality,
-  handleResetCausality,
-  updateCauseTokenData,
+  removeCausality,
+  resetCausality,
+  updateCauseData,
+  updateCausalityData,
 } from "../functions";
-import { useAppStore } from "../functions/hooks";
 import type { CausalitiesProps, CausalityStatus, CauseTrigger } from "../types";
 import styles from "./Causalities.module.css";
 import { Cause } from "./Cause";
 import { Effect } from "./Effect";
 import { Droppable } from "./dnd/Droppable";
+import { useAppStore } from "../functions/hooks";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
-export const Causalities = memo(({ height }: CausalitiesProps) => {
-  const { causalities } = useAppStore();
+export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
+  const { updateCausalityOnCompleteDialog } = useAppStore();
+
   const populateCausalities = () => {
     return causalities.length > 0 ? (
       causalities
@@ -40,10 +44,10 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
           const effects = causality.effects;
           const allEffects =
             instigatorEffects &&
-            instigatorEffects.length > 0 &&
-            causes?.some((cause) =>
-              ["collision", "covers"].includes(cause.trigger),
-            )
+              instigatorEffects.length > 0 &&
+              causes?.some((cause) =>
+                ["collision", "covers"].includes(cause.trigger),
+              )
               ? [...(effects || []), ...instigatorEffects]
               : effects || [];
 
@@ -69,7 +73,7 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                 <motion.img
                   layout
                   title="Reset"
-                  onClick={() => handleResetCausality(causality)}
+                  onClick={() => resetCausality(causality)}
                   className={styles["causality-reset"]}
                   src={reset}
                   alt="Reset Causality"
@@ -81,7 +85,7 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                 <motion.img
                   layout
                   title="Delete"
-                  onClick={() => handleRemoveCausality(causality)}
+                  onClick={() => removeCausality(causality)}
                   className={styles["causality-delete"]}
                   src={fire}
                   alt="Delete Causality"
@@ -90,7 +94,7 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
               </motion.div>
               <motion.div className={styles["causality-cause-effect-area"]}>
                 {/* CAUSE TOKEN AREA */}
-                <Droppable id={`${causality.id}-causes`}>
+                <Droppable id={`${causality.id}-${causality.name}-causes`}>
                   <>
                     {causes &&
                       causes.length > 0 &&
@@ -105,7 +109,7 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                   </>
                 </Droppable>
                 {/* EFFECT TOKEN AREA */}
-                <Droppable id={`${causality.id}-effects`}>
+                <Droppable id={`${causality.id}-${causality.name}-effects`}>
                   {allEffects && allEffects.length > 0 ? (
                     <>
                       {allEffects.map((effect) => {
@@ -139,43 +143,43 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                     {causes?.some((cause) =>
                       ["collision", "covers"].includes(cause.trigger),
                     ) && (
-                      <div>
-                        <img
-                          className={styles["causality-triggering-token-icon"]}
-                          src={target}
-                          alt="Triggering Token Icon"
-                          title="Add an effect on whichever token triggers this collision or covering"
-                          onClick={() => {
-                            return updateCauseTokenData(
-                              causality.id,
-                              causes[0].tokenId,
-                              "instigatorEffects",
-                              [
-                                ...(causes[0].instigatorEffects || []),
-                                {
-                                  name: "The Triggering Token",
-                                  label: "",
-                                  effectId: randomUUID(),
-                                  imageUrl: target,
-                                  action: "",
-                                  isInstigator: true,
-                                  causalityId: causality.id,
-                                  // Set the tokenID to the first cause token, just until the collision occurs.
-                                  // It will then be updated to the token id for the token that actually
-                                  // instigated a collision.
-                                  tokenId: causes[0].tokenId,
-                                },
-                              ],
-                            );
-                          }}
-                        />
-                        <p
-                          className={styles["causality-triggering-token-text"]}
-                        >
-                          <em>&lt;– Add a Triggering Token Effect</em>
-                        </p>
-                      </div>
-                    )}
+                        <div>
+                          <img
+                            className={styles["causality-triggering-token-icon"]}
+                            src={target}
+                            alt="Triggering Token Icon"
+                            title="Add an effect on whichever token triggers this collision or covering"
+                            onClick={() => {
+                              return updateCauseData(
+                                causality.id,
+                                causes[0].tokenId,
+                                "instigatorEffects",
+                                [
+                                  ...(causes[0].instigatorEffects || []),
+                                  {
+                                    name: "The Triggering Token",
+                                    label: "",
+                                    effectId: randomUUID(),
+                                    imageUrl: target,
+                                    action: "",
+                                    isInstigator: true,
+                                    causalityId: causality.id,
+                                    // Set the tokenID to the first cause token, just until the collision occurs.
+                                    // It will then be updated to the token id for the token that actually
+                                    // instigated a collision.
+                                    tokenId: causes[0].tokenId,
+                                  },
+                                ],
+                              );
+                            }}
+                          />
+                          <p
+                            className={styles["causality-triggering-token-text"]}
+                          >
+                            <em>&lt;– Add a Triggering Token Effect</em>
+                          </p>
+                        </div>
+                      )}
                   </>
                 </Droppable>
               </motion.div>
@@ -192,7 +196,7 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                       title="Set a time delay"
                       onChange={(event) => {
                         if (causes[0]) {
-                          return updateCauseTokenData(
+                          return updateCauseData(
                             causality.id,
                             causes[0].tokenId,
                             "delay",
@@ -221,6 +225,56 @@ export const Causalities = memo(({ height }: CausalitiesProps) => {
                       })}
                     </select>
                   </label>
+                </div>
+                <div className={styles["causality-naming-zone"]}>
+                  {!causality?.isEditNameModeOn && (
+                    <>
+                      <img
+                        className={styles["causality-edit-name-icon"]}
+                        src={edit}
+                        alt="edit icon"
+                        title="Edit Causality Name"
+                        onClick={() => {
+                          updateCausalityData(causality.id, "isEditNameModeOn", true)
+                        }}
+                      />
+                      <p className={styles["causality-naming-zone-text"]}>{causality.name}</p>
+                    </>
+                  )}
+                  {causality?.isEditNameModeOn && (
+                    <>
+                      <img
+                        className={styles["causality-edit-name-icon"]}
+                        src={ok}
+                        alt="accept icon"
+                        title="Accept New Causality Name"
+                        onClick={() => {
+                          updateCausalityData(causality.id, "isEditNameModeOn", false)
+                        }}
+                      />
+                      <input
+                        type="text"
+                        className={styles["causality-naming-zone-input"]}
+                        value={causality.name}
+                        size={causality.name.length}
+                        onChange={(e) => updateCausalityData(causality.id, "name", e.target.value)}
+                      />
+                    </>
+                  )}
+                </div>
+                <div
+                  className={styles["causality-on-complete-zone"]}
+                >
+                  <button
+                    className={styles["causality-on-complete-buttton"]}
+                    onClick={() => {
+                      updateCausalityOnCompleteDialog({
+                        open: true,
+                        causalityId: causality.id
+                      });
+                    }}
+                  >On Complete
+                  </button>
                 </div>
               </div>
             </motion.div>

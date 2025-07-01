@@ -1,7 +1,7 @@
 import debounce from "lodash/debounce";
 import { useMemo, useState } from "react";
 
-import { updateEffectTokenData } from "../functions";
+import { updateEffectData } from "../functions";
 import type { Broadcast, BroadcastInputProps, Destination } from "../types";
 import styles from "./BroadcastInput.module.css";
 
@@ -14,7 +14,7 @@ export const BroadcastInput = ({ causality, effect }: BroadcastInputProps) => {
   const debouncedUpdateChannel = useMemo(
     () =>
       debounce((newValue: string) => {
-        updateEffectTokenData(
+        updateEffectData(
           causality.id,
           effect.tokenId,
           effect.effectId,
@@ -36,7 +36,7 @@ export const BroadcastInput = ({ causality, effect }: BroadcastInputProps) => {
   const debouncedUpdateData = useMemo(
     () =>
       debounce((newValue: string) => {
-        updateEffectTokenData(
+        updateEffectData(
           causality.id,
           effect.tokenId,
           effect.effectId,
@@ -65,7 +65,7 @@ export const BroadcastInput = ({ causality, effect }: BroadcastInputProps) => {
   const handleDestinationChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newValue = e.target.value as Destination;
     setDestination(newValue);
-    updateEffectTokenData(
+    updateEffectData(
       causality.id,
       effect.tokenId,
       effect.effectId,

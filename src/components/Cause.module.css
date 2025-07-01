@@ -44,6 +44,11 @@
   font-weight: 600;
 }
 
+.cause-label {
+  font-size: 12px;
+  font-weight: 400;
+}
+
 .cause-trigger-settings {
   display: block;
   width: 100%;
@@ -60,7 +65,7 @@
   margin-top: 0.25rem;
 }
 
-.collision-edit-buttton {
+.collision-edit-button {
   border: 1px solid #8447ff;
   background-color: #4c396e;
   border-radius: 5px;
@@ -68,6 +73,10 @@
   box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4);
   font-weight: 600;
   margin-right: 0.5rem;
+}
+
+.collision-edit-button:hover {
+  border: 1px solid #ae86ff;
 }
 
 .collision-edit-area-token-text img {

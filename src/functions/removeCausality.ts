@@ -3,7 +3,7 @@ import OBR from "@owlbear-rodeo/sdk";
 import { ID } from "../constants";
 import type { Causality, CausalityToken } from "../types";
 
-export const handleRemoveCausality = (c: Causality) => {
+export const removeCausality = (c: Causality) => {
   const tokensToRemoveCausalityFrom: string[] = [];
   if (c.effects && c.effects.length > 0) {
     c.effects.forEach((effect) => {

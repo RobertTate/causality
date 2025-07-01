@@ -8,7 +8,10 @@ import OBR from "@owlbear-rodeo/sdk";
 import { useState } from "react";
 import ShortUniqueId from "short-unique-id";
 
+import reset from "../assets/reset.svg";
 import { DROP_ZONE_ID, ID } from "../constants";
+import { resetAllCausalities } from "../functions";
+import { useAppStore } from "../functions/hooks";
 import type { CausalityToken } from "../types";
 import { Causalities } from "./Causalities";
 import styles from "./CausalityManager.module.css";
@@ -20,6 +23,7 @@ const { randomUUID } = new ShortUniqueId({ length: 8 });
 const MIN_PANE = 0;
 
 export const CausalityManager = () => {
+  const { causalities } = useAppStore();
   const [topH, setTopH] = useState(150);
   const [bottomH, setBotH] = useState(280);
 
@@ -85,6 +89,8 @@ export const CausalityManager = () => {
 
           itemToUpdate.metadata[ID].causalities.unshift({
             id: uniqueCausalityId,
+            name: uniqueCausalityId,
+            causalityIdsToReset: [],
             tokenId: itemToUpdate.id,
             timestamp,
             causes: [
@@ -107,7 +113,7 @@ export const CausalityManager = () => {
       );
     } else if (((event.over?.id as string) || "").includes("effects")) {
       // Token was dragged into an effect token area
-      const causalityId = (event.over?.id as string).split("-effects")[0];
+      const [causalityId, causalityName] = (event.over?.id as string).split("-");
       OBR.scene.items.updateItems(
         (item) => {
           return item.id === currentToken.id;
@@ -142,7 +148,9 @@ export const CausalityManager = () => {
           } else {
             itemToUpdate.metadata[ID].causalities.push({
               id: causalityId,
+              name: causalityName,
               tokenId: itemToUpdate.id,
+              causalityIdsToReset: [],
               timestamp: new Date().toISOString(),
               effects: [
                 {
@@ -160,7 +168,7 @@ export const CausalityManager = () => {
         },
       );
     } else if (((event.over?.id as string) || "").includes("causes")) {
-      const causalityId = (event.over?.id as string).split("-causes")[0];
+      const [ causalityId, causalityName ] = (event.over?.id as string).split("-");
       OBR.scene.items.updateItems(
         (item) => {
           return item.id === currentToken.id;
@@ -200,7 +208,9 @@ export const CausalityManager = () => {
           } else {
             itemToUpdate.metadata[ID].causalities.push({
               id: causalityId,
+              name: causalityName,
               tokenId: itemToUpdate.id,
+              causalityIdsToReset: [],
               timestamp,
               causes: [
                 {
@@ -227,12 +237,11 @@ export const CausalityManager = () => {
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <TokenPool height={topH} />
-
       <div
         className={styles["causality-manager-resize"]}
         onPointerDown={startResize}
         style={{
-          height: "6px",
+          height: "8px",
           borderRadius: "9999px",
           width: "60px",
           margin: "auto",
@@ -241,8 +250,19 @@ export const CausalityManager = () => {
           transform: "translateY(-15px)",
         }}
       />
-
-      <Causalities height={bottomH} />
+      <p className={styles["causality-manager-causalities-title"]}>
+        Causalities
+      </p>
+      {causalities.length > 0 && (
+        <img
+          title="Reset All Causalities"
+          onClick={resetAllCausalities}
+          className={styles["causality-manager-reset-all"]}
+          src={reset}
+          alt="Reset All Causalities"
+        />
+      )}
+      <Causalities causalities={causalities} height={bottomH} />
       <DragOverlay>
         {activeToken && <Token isOverlay={true} token={activeToken} />}
       </DragOverlay>
