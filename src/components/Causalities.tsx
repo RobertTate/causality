@@ -271,7 +271,7 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                         type="text"
                         className={styles["causality-naming-zone-input"]}
                         value={causality.name}
-                        size={causality.name.length}
+                        size={causality?.name?.length || 8}
                         onChange={(e) =>
                           updateCausalityData(
                             causality.id,
