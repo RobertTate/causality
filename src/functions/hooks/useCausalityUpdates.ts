@@ -1,9 +1,15 @@
 import OBR from "@owlbear-rodeo/sdk";
-import { useEffect } from "react";
-import { ID } from "../../constants";
-import { CausalityToken, CausalityTokenMetaData, Causality, CauseOperator } from "../../types";
-import { triggerEffectTokens, hasCollisionOccured } from "../index";
 import { isArray, mergeWith } from "lodash";
+import { useEffect } from "react";
+
+import { ID } from "../../constants";
+import {
+  Causality,
+  CausalityToken,
+  CausalityTokenMetaData,
+  CauseOperator,
+} from "../../types";
+import { hasCollisionOccured, triggerCausality } from "../index";
 import { useAppStore } from "./useAppStore";
 
 export const useCausalityUpdates = () => {
@@ -126,20 +132,22 @@ export const useCausalityUpdates = () => {
           };
 
           if (areCauseConditionsMet(causeConditionArray)) {
+            const delay = causality.delay || causality?.causes?.[0]?.delay;
+
             if (
               causes[0].instigatorEffects &&
               causes[0].instigatorEffects.length > 0
             ) {
               setTimeout(() => {
-                return triggerEffectTokens(
+                return triggerCausality(
                   causality.id,
                   causes[0].instigatorEffects,
                 );
-              }, Number(causes[0].delay));
+              }, Number(delay));
             } else {
               setTimeout(() => {
-                return triggerEffectTokens(causality.id);
-              }, Number(causes[0].delay));
+                return triggerCausality(causality.id);
+              }, Number(delay));
             }
           }
         }
@@ -209,5 +217,4 @@ export const useCausalityUpdates = () => {
       onItemsChange();
     });
   }, []);
-
-}
+};

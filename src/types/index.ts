@@ -59,12 +59,15 @@ export type TokenToTriggerCollision = {
 export type Cause = TokenData & {
   trigger: CauseTrigger;
   status: CausalityStatus;
+  /**
+   * @deprecated - `delay` has moved to the `Causality` type. Need it here for a while so that it's not a breaking change, however.
+   */
   delay?: string;
   timestamp: string;
   causeId: string;
   isCollided: boolean;
   tokenToTriggerCollision?: TokenToTriggerCollision;
-  layerToTriggerCollision?: 'same' | 'any';
+  layerToTriggerCollision?: "same" | "any";
   instigatorEffects?: InstigatorEffect[];
   operator?: CauseOperator;
 };
@@ -74,6 +77,8 @@ export type Causality = {
   name: string;
   tokenId: string;
   timestamp: string;
+  delay: string;
+  loopsArePaused?: boolean;
   causes?: Cause[];
   effects?: Effect[];
   isEditNameModeOn?: boolean;
@@ -106,7 +111,7 @@ export type TriggeringTokenForCollisionDialogConfig = {
 export type CausalityOnCompleteDialogConfig = {
   open: boolean;
   causalityId?: string;
-}
+};
 
 export type AppContextProps = {
   tokens: CausalityToken[];
@@ -121,7 +126,9 @@ export type AppContextProps = {
     triggeringTokenForCollisionDialog: TriggeringTokenForCollisionDialogConfig,
   ) => void;
   causalityOnCompleteDialog: CausalityOnCompleteDialogConfig;
-  updateCausalityOnCompleteDialog: (causalityOnCompleteDialog: CausalityOnCompleteDialogConfig) => void
+  updateCausalityOnCompleteDialog: (
+    causalityOnCompleteDialog: CausalityOnCompleteDialogConfig,
+  ) => void;
 };
 
 export type AppProviderProps = {

@@ -2,25 +2,27 @@ import { AnimatePresence, motion } from "motion/react";
 import { memo } from "react";
 import ShortUniqueId from "short-unique-id";
 
+import edit from "../assets/edit.svg";
 import fire from "../assets/fire.svg";
+import ok from "../assets/ok.svg";
 import reset from "../assets/reset.svg";
 import target from "../assets/target.svg";
 import timer from "../assets/timer.svg";
-import edit from "../assets/edit.svg";
-import ok from "../assets/ok.svg";
+import play from "../assets/play.svg";
+import pause from "../assets/pause.svg";
 import { DROP_ZONE_ID } from "../constants";
 import {
   removeCausality,
   resetCausality,
-  updateCauseData,
   updateCausalityData,
+  updateCauseData,
 } from "../functions";
-import type { CausalitiesProps, CausalityStatus, CauseTrigger } from "../types";
+import { useAppStore } from "../functions/hooks";
+import type { CausalitiesProps, CausalityStatus } from "../types";
 import styles from "./Causalities.module.css";
 import { Cause } from "./Cause";
 import { Effect } from "./Effect";
 import { Droppable } from "./dnd/Droppable";
-import { useAppStore } from "../functions/hooks";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
@@ -94,7 +96,9 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
               </motion.div>
               <motion.div className={styles["causality-cause-effect-area"]}>
                 {/* CAUSE TOKEN AREA */}
-                <Droppable id={`${causality.id}-${causality.name}-causes`}>
+                <Droppable
+                  id={`${causality.id}-${causality.name}-${causality?.delay || causality?.causes?.[0]?.delay || "0"}-causes`}
+                >
                   <>
                     {causes &&
                       causes.length > 0 &&
@@ -109,7 +113,9 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                   </>
                 </Droppable>
                 {/* EFFECT TOKEN AREA */}
-                <Droppable id={`${causality.id}-${causality.name}-effects`}>
+                <Droppable
+                  id={`${causality.id}-${causality.name}-${causality?.delay || causality?.causes?.[0]?.delay || "0"}-effects`}
+                >
                   {allEffects && allEffects.length > 0 ? (
                     <>
                       {allEffects.map((effect) => {
@@ -196,15 +202,14 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                       title="Set a time delay"
                       onChange={(event) => {
                         if (causes[0]) {
-                          return updateCauseData(
+                          return updateCausalityData(
                             causality.id,
-                            causes[0].tokenId,
                             "delay",
-                            event.target.value as CauseTrigger,
+                            event.target.value,
                           );
                         }
                       }}
-                      value={causes[0]?.delay || "0"}
+                      value={causality.delay || causes?.[0]?.delay || "0"}
                       disabled={causalityStatus === "Complete" ? true : false}
                     >
                       {[
@@ -235,10 +240,16 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                         alt="edit icon"
                         title="Edit Causality Name"
                         onClick={() => {
-                          updateCausalityData(causality.id, "isEditNameModeOn", true)
+                          updateCausalityData(
+                            causality.id,
+                            "isEditNameModeOn",
+                            true,
+                          );
                         }}
                       />
-                      <p className={styles["causality-naming-zone-text"]}>{causality.name}</p>
+                      <p className={styles["causality-naming-zone-text"]}>
+                        {causality.name}
+                      </p>
                     </>
                   )}
                   {causality?.isEditNameModeOn && (
@@ -249,7 +260,11 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                         alt="accept icon"
                         title="Accept New Causality Name"
                         onClick={() => {
-                          updateCausalityData(causality.id, "isEditNameModeOn", false)
+                          updateCausalityData(
+                            causality.id,
+                            "isEditNameModeOn",
+                            false,
+                          );
                         }}
                       />
                       <input
@@ -257,25 +272,64 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                         className={styles["causality-naming-zone-input"]}
                         value={causality.name}
                         size={causality.name.length}
-                        onChange={(e) => updateCausalityData(causality.id, "name", e.target.value)}
+                        onChange={(e) =>
+                          updateCausalityData(
+                            causality.id,
+                            "name",
+                            e.target.value,
+                          )
+                        }
                       />
                     </>
                   )}
                 </div>
-                <div
-                  className={styles["causality-on-complete-zone"]}
-                >
-                  <button
-                    className={styles["causality-on-complete-buttton"]}
-                    onClick={() => {
-                      updateCausalityOnCompleteDialog({
-                        open: true,
-                        causalityId: causality.id
-                      });
-                    }}
-                  >On Complete
-                  </button>
-                </div>
+                {(causality.delay !== "0" || causes?.[0]?.delay) && (
+                  <div className={styles["causality-on-complete-zone"]}>
+                    <button
+                      title="Reset other Causalities when this one completes"
+                      className={styles["causality-on-complete-buttton"]}
+                      style={{
+                        boxShadow: `0px 0px 3px 1px ${causality.loopsArePaused ? '#f46767' : '#ae86ff'}`
+                      }}
+                      onClick={() => {
+                        updateCausalityOnCompleteDialog({
+                          open: true,
+                          causalityId: causality.id,
+                        });
+                      }}
+                    >
+                      Loops
+                    </button>
+                    {causality.loopsArePaused ? (
+                      <img
+                        className={styles["causality-on-complete-play-pause"]}
+                        src={play} alt="Play / Resume Loops"
+                        title="Play / Resume Loops"
+                        onClick={() =>
+                          updateCausalityData(
+                            causality.id,
+                            "loopsArePaused",
+                            false,
+                          )
+                        }
+                      />
+                    ) : (
+                      <img
+                        className={styles["causality-on-complete-play-pause"]}
+                        src={pause}
+                        alt="Pause Loops"
+                        title="Pause Loops"
+                        onClick={() =>
+                          updateCausalityData(
+                            causality.id,
+                            "loopsArePaused",
+                            true,
+                          )
+                        }
+                      />
+                    )}
+                  </div>
+                )}
               </div>
             </motion.div>
           );

@@ -99,11 +99,13 @@ export const useCausalityTokenSetterMenuContext = () => {
                     {
                       id: uniqueCausalityId,
                       tokenId: selectedItem.id,
+                      name: uniqueCausalityId,
+                      delay: "0",
+                      causalityIdsToReset: [],
                       timestamp,
                       causes: [
                         {
                           status: "Pending",
-                          delay: "0",
                           isCollided: false,
                           tokenId: selectedItem.id,
                           causalityId: uniqueCausalityId,

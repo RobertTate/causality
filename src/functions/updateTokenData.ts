@@ -1,7 +1,13 @@
 import OBR from "@owlbear-rodeo/sdk";
 
 import { ID } from "../constants";
-import type { Broadcast, Causality, CausalityToken, Cause, Effect } from "../types";
+import type {
+  Broadcast,
+  Causality,
+  CausalityToken,
+  Cause,
+  Effect,
+} from "../types";
 
 export const updateCausalityData = <K extends keyof Causality>(
   causalityID: string,
@@ -13,7 +19,9 @@ export const updateCausalityData = <K extends keyof Causality>(
     (item) => {
       const causalityToken = item as CausalityToken;
       const causalityTokenMetaData = causalityToken?.metadata?.[ID];
-      const matchingCausality = (causalityTokenMetaData?.causalities || []).find((causality) => {
+      const matchingCausality = (
+        causalityTokenMetaData?.causalities || []
+      ).find((causality) => {
         return causality.id === causalityID;
       });
       if (matchingCausality) {
@@ -34,7 +42,9 @@ export const updateCausalityData = <K extends keyof Causality>(
               if (!matchingCausality["causalityIdsToReset"] === undefined) {
                 matchingCausality["causalityIdsToReset"] = [];
               }
-              const causalityIdsToReset = matchingCausality[propName] as Causality["causalityIdsToReset"]
+              const causalityIdsToReset = matchingCausality[
+                propName
+              ] as Causality["causalityIdsToReset"];
               const [idToAdd] = propValue as string[];
               if (operation === "add") {
                 matchingCausality["causalityIdsToReset"] = [
@@ -42,7 +52,9 @@ export const updateCausalityData = <K extends keyof Causality>(
                   ...causalityIdsToReset,
                 ];
               } else if (operation === "remove") {
-                matchingCausality["causalityIdsToReset"] = (matchingCausality["causalityIdsToReset"] || []).filter((id) => {
+                matchingCausality["causalityIdsToReset"] = (
+                  matchingCausality["causalityIdsToReset"] || []
+                ).filter((id) => {
                   return id !== idToAdd;
                 });
               }
@@ -54,7 +66,7 @@ export const updateCausalityData = <K extends keyof Causality>(
       }
     },
   );
-}
+};
 
 export const updateCauseData = <K extends keyof Cause>(
   causalityID: string,

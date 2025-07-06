@@ -1,12 +1,17 @@
-import { Dialog, Checkbox } from "radix-ui";
-import close from "../assets/close.svg";
+import { Checkbox, Dialog } from "radix-ui";
+
 import check from "../assets/check.svg";
+import close from "../assets/close.svg";
 import { updateCausalityData } from "../functions";
 import { useAppStore } from "../functions/hooks";
 import styles from "./CausalityOnCompleteDialog.module.css";
 
 export const CausalityOnCompleteDialog = () => {
-  const { causalityOnCompleteDialog, updateCausalityOnCompleteDialog, causalities } = useAppStore();
+  const {
+    causalityOnCompleteDialog,
+    updateCausalityOnCompleteDialog,
+    causalities,
+  } = useAppStore();
   const { open, causalityId } = causalityOnCompleteDialog;
 
   const causalityUnderReview = causalities.find((c) => c.id === causalityId);
@@ -26,9 +31,12 @@ export const CausalityOnCompleteDialog = () => {
           aria-describedby={undefined}
           className={styles["dialog-content"]}
         >
-
           <Dialog.Title className={styles["dialog-title"]}>
-            When <span className={styles["dialog-title-causality-name"]}>&nbsp;{causalityUnderReview?.name}&nbsp;</span> completes,
+            When{" "}
+            <span className={styles["dialog-title-causality-name"]}>
+              &nbsp;{causalityUnderReview?.name}&nbsp;
+            </span>{" "}
+            completes,
           </Dialog.Title>
           <p className={styles["dialog-post"]}>
             <strong>The following Causalities will reset:</strong>
@@ -42,9 +50,21 @@ export const CausalityOnCompleteDialog = () => {
                     onCheckedChange={(checked) => {
                       if (!causalityUnderReview) return;
                       if (checked && !causalityIdsToReset.includes(c.id)) {
-                        causalityId && updateCausalityData(causalityId, "causalityIdsToReset", [c.id], "add");
+                        causalityId &&
+                          updateCausalityData(
+                            causalityId,
+                            "causalityIdsToReset",
+                            [c.id],
+                            "add",
+                          );
                       } else if (!checked) {
-                        causalityId && updateCausalityData(causalityId, "causalityIdsToReset", [c.id], "remove");
+                        causalityId &&
+                          updateCausalityData(
+                            causalityId,
+                            "causalityIdsToReset",
+                            [c.id],
+                            "remove",
+                          );
                       }
                     }}
                     name="causalities to reset"
@@ -53,13 +73,28 @@ export const CausalityOnCompleteDialog = () => {
                     id={c.name}
                     checked={causalityIdsToReset.includes(c.id)}
                   >
-                    <Checkbox.Indicator className={styles["dialog-checkbox-indicator"]}>
-                      <img width={25} height={25} src={check} alt="Check Icon" />
+                    <Checkbox.Indicator
+                      className={styles["dialog-checkbox-indicator"]}
+                    >
+                      <img
+                        width={25}
+                        height={25}
+                        src={check}
+                        alt="Check Icon"
+                      />
                     </Checkbox.Indicator>
                   </Checkbox.Root>
-                  <label className={styles["dialog-checkbox-label"]} htmlFor={c.name}>{c.name} <span style={{ fontSize: "14px" }}>{c.id === causalityId ? "(itself)" : ""}</span></label>
+                  <label
+                    className={styles["dialog-checkbox-label"]}
+                    htmlFor={c.name}
+                  >
+                    {c.name}{" "}
+                    <span style={{ fontSize: "14px" }}>
+                      {c.id === causalityId ? "(itself)" : ""}
+                    </span>
+                  </label>
                 </div>
-              )
+              );
             })}
           </div>
 

@@ -57,7 +57,7 @@ const updateItemByEffect = (
   }
 };
 
-export const triggerEffectTokens = async (
+export const triggerCausality = async (
   causalityID: string,
   instigatorEffects: InstigatorEffect[] = [],
 ) => {
@@ -68,15 +68,7 @@ export const triggerEffectTokens = async (
     (item) => {
       const itemMetaData = (item as CausalityToken).metadata;
       if (itemMetaData[ID]) {
-        const causalities = itemMetaData[ID].causalities;
-        if (causalities && causalities.length > 0) {
-          const matchingCausality = causalities.find(
-            (causality) => causality.id === causalityID,
-          );
-          if (matchingCausality) {
-            return true;
-          }
-        }
+        return itemMetaData[ID].isCausalityToken ? true : false;
       }
 
       if (instigatorEffects && instigatorEffects.length > 0) {
@@ -135,6 +127,37 @@ export const triggerEffectTokens = async (
                     action: effect.action,
                     effectId: effect.effectId,
                   });
+                }
+              }
+
+              const causalityIdsToReset = causality.causalityIdsToReset || [];
+              if (
+                causalityIdsToReset &&
+                causalityIdsToReset.length > 0 &&
+                causality?.loopsArePaused === false &&
+                ((causality.delay && causality.delay !== "0") ||
+                  (causality?.causes?.[0]?.delay &&
+                    causality?.causes?.[0]?.delay !== "0"))
+              ) {
+                for (const item of items) {
+                  const itemToUpdate = item as CausalityToken;
+                  const causalityMetaData = itemToUpdate.metadata[ID];
+                  const causalities = causalityMetaData.causalities;
+                  if (causalities && causalities.length > 0) {
+                    causalities.forEach((causality) => {
+                      if (causalityIdsToReset.includes(causality.id)) {
+                        const causes = causality.causes;
+                        if (causes && causes.length > 0) {
+                          for (const cause of causes) {
+                            cause.status = "Pending";
+                            if (cause.isCollided) {
+                              cause.isCollided = false;
+                            }
+                          }
+                        }
+                      }
+                    });
+                  }
                 }
               }
             }

@@ -1,13 +1,14 @@
 import { useCallback, useRef, useState } from "react";
+
 import { AppContext } from "./AppContext";
 import type {
   AppContextProps,
   AppProviderProps,
   Causality,
-  CausalityToken,
-  TriggeringTokenForCollisionDialogConfig,
-  EffectDialogConfig,
   CausalityOnCompleteDialogConfig,
+  CausalityToken,
+  EffectDialogConfig,
+  TriggeringTokenForCollisionDialogConfig,
 } from "./types";
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
@@ -35,13 +36,17 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     });
   }, []);
 
-  const [triggeringTokenForCollisionDialog, setTriggeringTokenForCollisionDialog] =
-    useState<TriggeringTokenForCollisionDialogConfig>({
-      open: false,
-    });
+  const [
+    triggeringTokenForCollisionDialog,
+    setTriggeringTokenForCollisionDialog,
+  ] = useState<TriggeringTokenForCollisionDialogConfig>({
+    open: false,
+  });
 
   const updateTriggeringTokenForCollisionDialog = useCallback(
-    (triggeringTokenForCollisionDialog: TriggeringTokenForCollisionDialogConfig) => {
+    (
+      triggeringTokenForCollisionDialog: TriggeringTokenForCollisionDialogConfig,
+    ) => {
       setTriggeringTokenForCollisionDialog((prev) => {
         return {
           ...prev,
@@ -52,20 +57,22 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     [],
   );
 
-  const [causalityOnCompleteDialog, setCausalityOnCompleteDialog] = useState<CausalityOnCompleteDialogConfig>({
-    open: false,
-  });
+  const [causalityOnCompleteDialog, setCausalityOnCompleteDialog] =
+    useState<CausalityOnCompleteDialogConfig>({
+      open: false,
+    });
 
   const updateCausalityOnCompleteDialog = useCallback(
     (causalityOnCompleteDialog: CausalityOnCompleteDialogConfig) => {
       setCausalityOnCompleteDialog((prev) => {
         return {
           ...prev,
-          ...causalityOnCompleteDialog
-        }
-      })
-    }, [],
-  )
+          ...causalityOnCompleteDialog,
+        };
+      });
+    },
+    [],
+  );
 
   const store: AppContextProps = {
     tokens,

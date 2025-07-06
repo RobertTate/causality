@@ -6,8 +6,11 @@ import { useAppStore } from "../functions/hooks";
 import styles from "./TriggeringTokenForCollisionDialog.module.css";
 
 export const TriggeringTokenForCollisionDialog = () => {
-  const { triggeringTokenForCollisionDialog, updateTriggeringTokenForCollisionDialog, tokens } =
-    useAppStore();
+  const {
+    triggeringTokenForCollisionDialog,
+    updateTriggeringTokenForCollisionDialog,
+    tokens,
+  } = useAppStore();
   const { open, cause } = triggeringTokenForCollisionDialog;
 
   const handleClose = () => {

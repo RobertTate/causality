@@ -92,11 +92,11 @@ export const CausalityManager = () => {
             name: uniqueCausalityId,
             causalityIdsToReset: [],
             tokenId: itemToUpdate.id,
+            delay: "0",
             timestamp,
             causes: [
               {
                 status: "Pending",
-                delay: "0",
                 isCollided: false,
                 tokenId: itemToUpdate.id,
                 causalityId: uniqueCausalityId,
@@ -113,7 +113,9 @@ export const CausalityManager = () => {
       );
     } else if (((event.over?.id as string) || "").includes("effects")) {
       // Token was dragged into an effect token area
-      const [causalityId, causalityName] = (event.over?.id as string).split("-");
+      const [causalityId, causalityName, delay] = (
+        event.over?.id as string
+      ).split("-");
       OBR.scene.items.updateItems(
         (item) => {
           return item.id === currentToken.id;
@@ -149,6 +151,7 @@ export const CausalityManager = () => {
             itemToUpdate.metadata[ID].causalities.push({
               id: causalityId,
               name: causalityName,
+              delay: delay,
               tokenId: itemToUpdate.id,
               causalityIdsToReset: [],
               timestamp: new Date().toISOString(),
@@ -168,7 +171,9 @@ export const CausalityManager = () => {
         },
       );
     } else if (((event.over?.id as string) || "").includes("causes")) {
-      const [ causalityId, causalityName ] = (event.over?.id as string).split("-");
+      const [causalityId, causalityName, delay] = (
+        event.over?.id as string
+      ).split("-");
       OBR.scene.items.updateItems(
         (item) => {
           return item.id === currentToken.id;
@@ -210,6 +215,7 @@ export const CausalityManager = () => {
               id: causalityId,
               name: causalityName,
               tokenId: itemToUpdate.id,
+              delay: delay,
               causalityIdsToReset: [],
               timestamp,
               causes: [

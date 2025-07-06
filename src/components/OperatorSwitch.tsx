@@ -9,12 +9,7 @@ export const OperatorSwitch = ({ cause }: OperatorSwitchProps) => {
 
   const handleOnSwitchChange = (checked: boolean) => {
     const newOperator: CauseOperator = checked ? "OR" : "AND";
-    updateCauseData(
-      cause.causalityId,
-      cause.tokenId,
-      "operator",
-      newOperator,
-    );
+    updateCauseData(cause.causalityId, cause.tokenId, "operator", newOperator);
   };
 
   return (
