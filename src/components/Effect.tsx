@@ -2,7 +2,7 @@ import { motion } from "motion/react";
 import { useEffect } from "react";
 
 import fire from "../assets/fire.svg";
-import { handleRemoveEffect, updateCauseTokenData } from "../functions";
+import { removeEffect, updateCauseData } from "../functions";
 import { useAppStore } from "../functions/hooks";
 import type { CausalityStatus, EffectProps } from "../types";
 import styles from "./Effect.module.css";
@@ -62,14 +62,14 @@ export const Effect = ({
             const newInstigatorEffects = instigatorEffects.filter((ie) => {
               return ie.effectId !== effect.effectId;
             });
-            updateCauseTokenData(
+            updateCauseData(
               causality.id,
               causes[0].tokenId,
               "instigatorEffects",
               newInstigatorEffects,
             );
           } else {
-            handleRemoveEffect(causality.id, effect.tokenId, effect.effectId);
+            removeEffect(causality.id, effect.tokenId, effect.effectId);
           }
         }}
         className={styles["effect-delete"]}

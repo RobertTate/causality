@@ -1,13 +1,13 @@
 import { Dialog } from "radix-ui";
 
 import close from "../assets/close.svg";
-import { updateEffectTokenData } from "../functions";
+import { updateEffectData } from "../functions";
 import { useAppStore } from "../functions/hooks";
 import type { EffectAction } from "../types";
 import { BroadcastInput } from "./BroadcastInput";
-import styles from "./GlobalEffectDialog.module.css";
+import styles from "./EffectDialog.module.css";
 
-export const GlobalEffectDialog = () => {
+export const EffectDialog = () => {
   const { effectDialog, updateEffectDialog } = useAppStore();
   const { open, causality, effect } = effectDialog;
 
@@ -71,7 +71,7 @@ export const GlobalEffectDialog = () => {
               <select
                 name="dialog-effect-actions"
                 onChange={(event) => {
-                  updateEffectTokenData(
+                  updateEffectData(
                     causality.id,
                     effect.tokenId,
                     effect.effectId,

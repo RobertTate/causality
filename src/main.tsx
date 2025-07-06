@@ -2,14 +2,16 @@ import { createRoot } from "react-dom/client";
 
 import App from "./App.tsx";
 import { AppProvider } from "./AppProvider.tsx";
-import { GlobalCollisionOptionsDialog } from "./components/GlobalCollisionOptionsDialog.tsx";
-import { GlobalEffectDialog } from "./components/GlobalEffectDialog.tsx";
+import { CausalityOnCompleteDialog } from "./components/CausalityOnCompleteDialog.tsx";
+import { EffectDialog } from "./components/EffectDialog.tsx";
+import { TriggeringTokenForCollisionDialog } from "./components/TriggeringTokenForCollisionDialog.tsx";
 import "./index.css";
 
 createRoot(document.getElementById("root")!).render(
   <AppProvider>
     <App />
-    <GlobalEffectDialog />
-    <GlobalCollisionOptionsDialog />
+    <EffectDialog />
+    <TriggeringTokenForCollisionDialog />
+    <CausalityOnCompleteDialog />
   </AppProvider>,
 );

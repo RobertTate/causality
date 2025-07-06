@@ -1,17 +1,17 @@
 import { motion } from "motion/react";
 
 import fire from "../assets/fire.svg";
-import { handleRemoveCause, updateCauseTokenData } from "../functions";
+import { removeCause, updateCauseData } from "../functions";
 import { useAppStore } from "../functions/hooks";
 import type { CauseProps, CauseTrigger, Cause as CauseType } from "../types";
 import styles from "./Cause.module.css";
 import { OperatorSwitch } from "./OperatorSwitch";
 
 export const Cause = ({ cause, causality, index }: CauseProps) => {
-  const { updateCollisionOptionsDialog } = useAppStore();
+  const { updateTriggeringTokenForCollisionDialog } = useAppStore();
 
   const handleShowCollisionOptionsDialog = (cause: CauseType) => {
-    updateCollisionOptionsDialog({
+    updateTriggeringTokenForCollisionDialog({
       open: true,
       cause,
     });
@@ -32,7 +32,7 @@ export const Cause = ({ cause, causality, index }: CauseProps) => {
           <>
             <img
               onClick={() => {
-                handleRemoveCause(causality.id, cause.tokenId, cause.causeId);
+                removeCause(causality.id, cause.tokenId, cause.causeId);
               }}
               className={styles["cause-delete"]}
               src={fire}
@@ -51,15 +51,20 @@ export const Cause = ({ cause, causality, index }: CauseProps) => {
             src={cause?.imageUrl}
             alt={cause?.name}
           />
-          <motion.p layout className={styles["cause-name"]}>
-            {cause.name}
-          </motion.p>
+          <motion.div layout>
+            <motion.p layout className={styles["cause-name"]}>
+              {cause.name}
+            </motion.p>
+            <motion.p layout className={styles["cause-label"]}>
+              {cause.label}
+            </motion.p>
+          </motion.div>
         </motion.div>
         <motion.div layout className={styles["cause-trigger-settings"]}>
           <motion.select
             layout
             onChange={(event) => {
-              return updateCauseTokenData(
+              return updateCauseData(
                 causality.id,
                 cause.tokenId,
                 "trigger",
@@ -79,7 +84,7 @@ export const Cause = ({ cause, causality, index }: CauseProps) => {
           {["collision", "covers"].includes(cause.trigger) && (
             <div className={styles["collision-edit-area"]}>
               <button
-                className={styles["collision-edit-buttton"]}
+                className={styles["collision-edit-button"]}
                 onClick={() => handleShowCollisionOptionsDialog(cause)}
                 title={
                   "Click here to assign a specific token to trigger the collision"

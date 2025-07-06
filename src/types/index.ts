@@ -59,21 +59,30 @@ export type TokenToTriggerCollision = {
 export type Cause = TokenData & {
   trigger: CauseTrigger;
   status: CausalityStatus;
+  /**
+   * @deprecated - `delay` has moved to the `Causality` type. Need it here for a while so that it's not a breaking change, however.
+   */
   delay?: string;
   timestamp: string;
   causeId: string;
   isCollided: boolean;
   tokenToTriggerCollision?: TokenToTriggerCollision;
+  layerToTriggerCollision?: "same" | "any";
   instigatorEffects?: InstigatorEffect[];
   operator?: CauseOperator;
 };
 
 export type Causality = {
   id: string;
+  name: string;
   tokenId: string;
   timestamp: string;
+  delay: string;
+  loopsArePaused?: boolean;
   causes?: Cause[];
   effects?: Effect[];
+  isEditNameModeOn?: boolean;
+  causalityIdsToReset: string[];
 };
 
 export type CausalityTokenMetaData = {
@@ -94,20 +103,31 @@ export type EffectDialogConfig = {
   activeEffectId?: string;
 };
 
-export type CollisionOptionsDialogConfig = {
+export type TriggeringTokenForCollisionDialogConfig = {
   open: boolean;
   cause?: Cause;
 };
 
+export type CausalityOnCompleteDialogConfig = {
+  open: boolean;
+  causalityId?: string;
+};
+
 export type AppContextProps = {
   tokens: CausalityToken[];
+  updateTokens: (tokens: CausalityToken[]) => void;
   causalities: Causality[];
+  updateCausalities: (causalities: Causality[]) => void;
   collisionTokensRef: React.RefObject<CausalityToken[]>;
   effectDialog: EffectDialogConfig;
   updateEffectDialog: (effectDialog: EffectDialogConfig) => void;
-  collisionOptionsDialog: CollisionOptionsDialogConfig;
-  updateCollisionOptionsDialog: (
-    collisionOptionsDialog: CollisionOptionsDialogConfig,
+  triggeringTokenForCollisionDialog: TriggeringTokenForCollisionDialogConfig;
+  updateTriggeringTokenForCollisionDialog: (
+    triggeringTokenForCollisionDialog: TriggeringTokenForCollisionDialogConfig,
+  ) => void;
+  causalityOnCompleteDialog: CausalityOnCompleteDialogConfig;
+  updateCausalityOnCompleteDialog: (
+    causalityOnCompleteDialog: CausalityOnCompleteDialogConfig,
   ) => void;
 };
 
@@ -120,6 +140,7 @@ export type CausalityManagerProps = {
 };
 
 export type CausalitiesProps = {
+  causalities: Causality[];
   height: number;
 };
 

@@ -9,6 +9,7 @@ import { CausalityManager } from "./components/CausalityManager";
 import {
   useCausalityPointer,
   useCausalityTokenSetterMenuContext,
+  useCausalityUpdates,
 } from "./functions/hooks";
 import type { Role } from "./types";
 
@@ -25,11 +26,17 @@ function App() {
 
     OBR.onReady(() => {
       initApp();
+      OBR.player.onChange((player) => {
+        if (player.role !== role) {
+          setRole(player.role);
+        }
+      });
     });
   }, []);
 
   useCausalityPointer();
   useCausalityTokenSetterMenuContext();
+  useCausalityUpdates();
 
   return (
     <main className={styles["app-main"]}>

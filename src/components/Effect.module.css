@@ -33,6 +33,10 @@
   font-weight: 600;
 }
 
+.effect-edit:hover {
+  border: 1px solid #ae86ff;
+}
+
 .effect-edit:disabled {
   cursor: default;
 }

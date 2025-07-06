@@ -1,17 +1,20 @@
 import { Dialog } from "radix-ui";
 
 import close from "../assets/close.svg";
-import { updateCauseTokenData } from "../functions";
+import { updateCauseData } from "../functions";
 import { useAppStore } from "../functions/hooks";
-import styles from "./GlobalCollisionOptionsDialog.module.css";
+import styles from "./TriggeringTokenForCollisionDialog.module.css";
 
-export const GlobalCollisionOptionsDialog = () => {
-  const { collisionOptionsDialog, updateCollisionOptionsDialog, tokens } =
-    useAppStore();
-  const { open, cause } = collisionOptionsDialog;
+export const TriggeringTokenForCollisionDialog = () => {
+  const {
+    triggeringTokenForCollisionDialog,
+    updateTriggeringTokenForCollisionDialog,
+    tokens,
+  } = useAppStore();
+  const { open, cause } = triggeringTokenForCollisionDialog;
 
   const handleClose = () => {
-    updateCollisionOptionsDialog({
+    updateTriggeringTokenForCollisionDialog({
       open: false,
     });
   };
@@ -43,7 +46,7 @@ export const GlobalCollisionOptionsDialog = () => {
                 name="dialog-effect-actions"
                 onChange={(event) => {
                   if (cause) {
-                    updateCauseTokenData(
+                    updateCauseData(
                       cause.causalityId,
                       cause.tokenId,
                       "tokenToTriggerCollision",
@@ -57,7 +60,7 @@ export const GlobalCollisionOptionsDialog = () => {
                           .img as string,
                       },
                     );
-                    updateCollisionOptionsDialog({
+                    updateTriggeringTokenForCollisionDialog({
                       open: true,
                       cause: {
                         ...cause,

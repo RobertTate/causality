@@ -79,7 +79,6 @@ export const checkForCollisions = async (
                           cause.isCollided === true &&
                           cause.trigger === "covers"
                         ) {
-                          console.log("MOVED OFF!");
                           cause.isCollided = false;
                         }
                       }
@@ -116,7 +115,6 @@ export const checkForCollisions = async (
                             return;
                           }
                           // Successful Collision!
-                          console.log("MOVED ON!");
                           cause.isCollided = true;
                           const instigatorEffects = causes[0].instigatorEffects;
                           if (

@@ -20,10 +20,10 @@ learn-more: https://github.com/RobertTate/causality
 
 ## Features
 
-- ⚡ Drag-and-drop interface for defining *Cause ➜ Effect* chains  
-- 🖇️ Combine multiple causes with `AND` / `OR` logic  
-- 🔄 Chain causalities together for Rube-Goldberg moments  
-- 🖱️ Dedicated **Causality Move Tool** so collisions can fire while you drag 
+- ⚡ Drag-and-drop interface for defining _Cause ➜ Effect_ chains
+- 🖇️ Combine multiple causes with `AND` / `OR` logic
+- 🔄 Chain causalities together for Rube-Goldberg moments
+- 🖱️ Dedicated **Causality Move Tool** so collisions can fire while you drag
 
 ## How to use:
 
@@ -70,21 +70,25 @@ A **causality** can have more than one cause. All or some (depending on whether 
 - There are both **"Is Collided Into"** and **"Is Covered"** **cause** conditions. When only using one **cause** in a **causality**, they appear to behave the same. However, if you are using multiple **causes** - the difference becomes more clear:
 
 ### "Is Collided Into"
+
 - If you have two **causes** in a **causality** with an **AND** relationship and they are both using this trigger type, a token can bump into one, move away from it, then bump into the other, and the causality will trigger.
 
-*Example: An adventurer finds and pulls levers as they traverse a dungeon. As they reach and pull the final lever, a hidden passage is revealed.*
+_Example: An adventurer finds and pulls levers as they traverse a dungeon. As they reach and pull the final lever, a hidden passage is revealed._
 
 ### "Is Covered"
+
 - If you have two Causes in a causality with an AND relationship and they are both using this trigger type, a token must stay over each before the causality triggers.
 
-*Example: Two adventurers must each stay standing on a pressure plate, before a hidden passage is finally revealed.*
+_Example: Two adventurers must each stay standing on a pressure plate, before a hidden passage is finally revealed._
 
 ## FAQ
 
-**Collisions don’t fire while I drag a token**  
+**Collisions don’t fire while I drag a token**
+
 - Make sure you’ve selected the **Causality Move Tool** (you can hit C on your keyboard as a shortcut to get to it). Collisions only update during movement when this tool is in use.
 
-**My token still isn't triggering a collision**  
+**My token still isn't triggering a collision**
+
 - Even if that token isn't connected to a cause or effect, it must still first be added to Causality before it can be used to trigger collisions.
 
 <br />

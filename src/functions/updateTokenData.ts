@@ -1,9 +1,74 @@
 import OBR from "@owlbear-rodeo/sdk";
 
 import { ID } from "../constants";
-import type { Broadcast, CausalityToken, Cause, Effect } from "../types";
+import type {
+  Broadcast,
+  Causality,
+  CausalityToken,
+  Cause,
+  Effect,
+} from "../types";
 
-export const updateCauseTokenData = <K extends keyof Cause>(
+export const updateCausalityData = <K extends keyof Causality>(
+  causalityID: string,
+  propName: K,
+  propValue: Causality[K],
+  operation?: "add" | "remove",
+) => {
+  OBR.scene.items.updateItems(
+    (item) => {
+      const causalityToken = item as CausalityToken;
+      const causalityTokenMetaData = causalityToken?.metadata?.[ID];
+      const matchingCausality = (
+        causalityTokenMetaData?.causalities || []
+      ).find((causality) => {
+        return causality.id === causalityID;
+      });
+      if (matchingCausality) {
+        return true;
+      }
+      return false;
+    },
+    (items) => {
+      const itemsToUpdate = items as CausalityToken[];
+      for (const causalityToken of itemsToUpdate) {
+        const causalities = causalityToken.metadata?.[ID]?.causalities;
+        if (causalities) {
+          const matchingCausality = causalities.find((causality) => {
+            return causality.id === causalityID;
+          });
+          if (matchingCausality) {
+            if (propName === "causalityIdsToReset") {
+              if (!matchingCausality["causalityIdsToReset"] === undefined) {
+                matchingCausality["causalityIdsToReset"] = [];
+              }
+              const causalityIdsToReset = matchingCausality[
+                propName
+              ] as Causality["causalityIdsToReset"];
+              const [idToAdd] = propValue as string[];
+              if (operation === "add") {
+                matchingCausality["causalityIdsToReset"] = [
+                  idToAdd,
+                  ...causalityIdsToReset,
+                ];
+              } else if (operation === "remove") {
+                matchingCausality["causalityIdsToReset"] = (
+                  matchingCausality["causalityIdsToReset"] || []
+                ).filter((id) => {
+                  return id !== idToAdd;
+                });
+              }
+            } else {
+              matchingCausality[propName] = propValue;
+            }
+          }
+        }
+      }
+    },
+  );
+};
+
+export const updateCauseData = <K extends keyof Cause>(
   causalityID: string,
   tokenID: string,
   propName: K,
@@ -33,7 +98,7 @@ export const updateCauseTokenData = <K extends keyof Cause>(
   );
 };
 
-export const updateEffectTokenData = <K extends keyof Effect>(
+export const updateEffectData = <K extends keyof Effect>(
   causalityID: string,
   tokenID: string,
   effectID: string,

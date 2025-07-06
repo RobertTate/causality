@@ -1,11 +1,26 @@
-.causality-manager-resize::after {
-  content: "Causalities";
+.causality-manager-causalities-title {
+  position: absolute;
   font-size: 24px;
   font-weight: 700;
   background-color: #242424;
   padding: 0 0.25rem;
-  position: relative;
-  left: -261px;
-  top: -2px;
-  pointer-events: none;
+  margin-top: -23px;
+  user-select: none;
+  margin-left: 8px;
+}
+
+.causality-manager-reset-all {
+  position: absolute;
+  width: 27px;
+  height: 27px;
+  padding: 2px;
+  cursor: pointer;
+  user-select: none;
+  margin-top: -17px;
+  margin-left: 134px;
+  background-color: #242424;
+}
+
+.causality-manager-reset-all:hover {
+  border: 1px solid transparent;
 }

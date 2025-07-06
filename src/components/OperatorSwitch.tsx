@@ -1,6 +1,6 @@
 import { Switch } from "radix-ui";
 
-import { updateCauseTokenData } from "../functions";
+import { updateCauseData } from "../functions";
 import type { CauseOperator, OperatorSwitchProps } from "../types";
 import styles from "./OperatorSwitch.module.css";
 
@@ -9,12 +9,7 @@ export const OperatorSwitch = ({ cause }: OperatorSwitchProps) => {
 
   const handleOnSwitchChange = (checked: boolean) => {
     const newOperator: CauseOperator = checked ? "OR" : "AND";
-    updateCauseTokenData(
-      cause.causalityId,
-      cause.tokenId,
-      "operator",
-      newOperator,
-    );
+    updateCauseData(cause.causalityId, cause.tokenId, "operator", newOperator);
   };
 
   return (

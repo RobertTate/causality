@@ -55,6 +55,12 @@
   width: 20px;
   height: 20px;
   cursor: pointer;
+  opacity: 0.75;
+}
+
+.causality-delete:hover,
+.causality-reset:hover {
+  opacity: 1;
 }
 
 .causality-cause-effect-area {
@@ -64,13 +70,14 @@
 .causality-footer-area {
   display: flex;
   justify-content: space-between;
-  margin-top: 0.625rem;
-  font-size: 14px;
-  font-weight: 600;
+  align-items: flex-end;
+  margin-top: 0.5rem;
 }
 
 .causality-time-delay {
   display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .causality-time-delay-icon {
@@ -80,6 +87,10 @@
 
 .causality-time-delay-selection {
   margin-left: 0.5rem;
+}
+
+.causality-time-delay-selection select {
+  cursor: pointer;
 }
 
 .causality-triggering-token-icon {
@@ -95,4 +106,62 @@
   display: inline;
   font-size: 12px;
   margin-left: 0.25rem;
+}
+
+.causality-naming-zone {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.causality-naming-zone-text {
+  margin-left: 0.25rem;
+  font-weight: 600;
+}
+
+.causality-naming-zone-input {
+  font-size: 14px;
+  margin-left: 0.25rem;
+  min-width: 9ch;
+  border: 1px solid #8447ff;
+}
+
+.causality-naming-zone-input:focus {
+  outline: 1px solid #8447ff;
+}
+
+.causality-edit-name-icon {
+  width: 20px;
+  height: 20px;
+  opacity: 0.35;
+  cursor: pointer;
+}
+
+.causality-edit-name-icon:hover {
+  opacity: 1;
+}
+
+.causality-on-complete-buttton {
+  border: 1px solid #8447ff;
+  background-color: #4c396e;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 3px 3px 2px 0px rgba(0, 0, 0, 0.4);
+  font-weight: 600;
+}
+
+.causality-on-complete-buttton:hover {
+  box-shadow: 0px 0px 3px 1px white !important;
+}
+
+.causality-on-complete-zone {
+  display: flex;
+}
+
+.causality-on-complete-play-pause {
+  margin-left: 0.5rem;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  user-select: none;
 }
