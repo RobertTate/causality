@@ -283,7 +283,7 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                     </>
                   )}
                 </div>
-                {(causality.delay !== "0" || causes?.[0]?.delay) && (
+                {(causality.delay !== "0" || causes?.[0]?.delay !== "0") && (
                   <div className={styles["causality-on-complete-zone"]}>
                     <button
                       title="Reset other Causalities when this one completes"
