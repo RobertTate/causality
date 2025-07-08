@@ -25,7 +25,6 @@ import styles from "./Causalities.module.css";
 import { Cause } from "./Cause";
 import { Effect } from "./Effect";
 import { Droppable } from "./dnd/Droppable";
-import { hr } from "motion/react-client";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
