@@ -10,6 +10,8 @@ import target from "../assets/target.svg";
 import timer from "../assets/timer.svg";
 import play from "../assets/play.svg";
 import pause from "../assets/pause.svg";
+import up from "../assets/up.svg";
+import down from "../assets/down.svg";
 import { DROP_ZONE_ID } from "../constants";
 import {
   removeCausality,
@@ -23,6 +25,7 @@ import styles from "./Causalities.module.css";
 import { Cause } from "./Cause";
 import { Effect } from "./Effect";
 import { Droppable } from "./dnd/Droppable";
+import { hr } from "motion/react-client";
 
 const { randomUUID } = new ShortUniqueId({ length: 8 });
 
@@ -95,99 +98,105 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                 <motion.p layout>Effects</motion.p>
               </motion.div>
               <motion.div className={styles["causality-cause-effect-area"]}>
-                {/* CAUSE TOKEN AREA */}
-                <Droppable
-                  id={`${causality.id}-${causality.name}-${causality?.delay || causality?.causes?.[0]?.delay || "0"}-causes`}
-                >
+                {!causality.compact ? (
                   <>
-                    {causes &&
-                      causes.length > 0 &&
-                      causes.map((cause, index) => (
-                        <Cause
-                          cause={cause}
-                          causality={causality}
-                          key={cause.causeId}
-                          index={index}
-                        />
-                      ))}
-                  </>
-                </Droppable>
-                {/* EFFECT TOKEN AREA */}
-                <Droppable
-                  id={`${causality.id}-${causality.name}-${causality?.delay || causality?.causes?.[0]?.delay || "0"}-effects`}
-                >
-                  {allEffects && allEffects.length > 0 ? (
-                    <>
-                      {allEffects.map((effect) => {
-                        if (!effectsIDSet.has(effect.effectId)) {
-                          effectsIDSet.add(effect.effectId);
-                          return (
-                            <Effect
-                              key={effect.effectId}
-                              causality={causality}
-                              effect={effect}
-                              instigatorEffects={instigatorEffects || []}
-                            />
-                          );
-                        }
-                      })}
-                    </>
-                  ) : (
-                    <motion.p
-                      key="emptyEffectDisclaimer"
-                      layout="position"
-                      className={styles["causality-empty-effect-disclaimer"]}
+                    {/* CAUSE TOKEN AREA */}
+                    <Droppable
+                      id={`${causality.id}-${causality.name}-${causality?.delay || causality?.causes?.[0]?.delay || "0"}-causes`}
                     >
-                      <em>
-                        Drag tokens here from your <strong>token pool</strong>{" "}
-                        to add them as an "Effect".
-                      </em>
-                    </motion.p>
-                  )}
-
-                  <>
-                    {causes?.some((cause) =>
-                      ["collision", "covers"].includes(cause.trigger),
-                    ) && (
-                        <div>
-                          <img
-                            className={styles["causality-triggering-token-icon"]}
-                            src={target}
-                            alt="Triggering Token Icon"
-                            title="Add an effect on whichever token triggers this collision or covering"
-                            onClick={() => {
-                              return updateCauseData(
-                                causality.id,
-                                causes[0].tokenId,
-                                "instigatorEffects",
-                                [
-                                  ...(causes[0].instigatorEffects || []),
-                                  {
-                                    name: "The Triggering Token",
-                                    label: "",
-                                    effectId: randomUUID(),
-                                    imageUrl: target,
-                                    action: "",
-                                    isInstigator: true,
-                                    causalityId: causality.id,
-                                    // Set the tokenID to the first cause token, just until the collision occurs.
-                                    // It will then be updated to the token id for the token that actually
-                                    // instigated a collision.
-                                    tokenId: causes[0].tokenId,
-                                  },
-                                ],
+                      <>
+                        {causes &&
+                          causes.length > 0 &&
+                          causes.map((cause, index) => (
+                            <Cause
+                              cause={cause}
+                              causality={causality}
+                              key={cause.causeId}
+                              index={index}
+                            />
+                          ))}
+                      </>
+                    </Droppable>
+                    {/* EFFECT TOKEN AREA */}
+                    <Droppable
+                      id={`${causality.id}-${causality.name}-${causality?.delay || causality?.causes?.[0]?.delay || "0"}-effects`}
+                    >
+                      {allEffects && allEffects.length > 0 ? (
+                        <>
+                          {allEffects.map((effect) => {
+                            if (!effectsIDSet.has(effect.effectId)) {
+                              effectsIDSet.add(effect.effectId);
+                              return (
+                                <Effect
+                                  key={effect.effectId}
+                                  causality={causality}
+                                  effect={effect}
+                                  instigatorEffects={instigatorEffects || []}
+                                />
                               );
-                            }}
-                          />
-                          <p
-                            className={styles["causality-triggering-token-text"]}
-                          >
-                            <em>&lt;– Add a Triggering Token Effect</em>
-                          </p>
-                        </div>
+                            }
+                          })}
+                        </>
+                      ) : (
+                        <motion.p
+                          key="emptyEffectDisclaimer"
+                          layout="position"
+                          className={styles["causality-empty-effect-disclaimer"]}
+                        >
+                          <em>
+                            Drag tokens here from your <strong>token pool</strong>{" "}
+                            to add them as an "Effect".
+                          </em>
+                        </motion.p>
                       )}
+
+                      <>
+                        {causes?.some((cause) =>
+                          ["collision", "covers"].includes(cause.trigger),
+                        ) && (
+                            <div>
+                              <img
+                                className={styles["causality-triggering-token-icon"]}
+                                src={target}
+                                alt="Triggering Token Icon"
+                                title="Add an effect on whichever token triggers this collision or covering"
+                                onClick={() => {
+                                  return updateCauseData(
+                                    causality.id,
+                                    causes[0].tokenId,
+                                    "instigatorEffects",
+                                    [
+                                      ...(causes[0].instigatorEffects || []),
+                                      {
+                                        name: "The Triggering Token",
+                                        label: "",
+                                        effectId: randomUUID(),
+                                        imageUrl: target,
+                                        action: "",
+                                        isInstigator: true,
+                                        causalityId: causality.id,
+                                        // Set the tokenID to the first cause token, just until the collision occurs.
+                                        // It will then be updated to the token id for the token that actually
+                                        // instigated a collision.
+                                        tokenId: causes[0].tokenId,
+                                      },
+                                    ],
+                                  );
+                                }}
+                              />
+                              <p
+                                className={styles["causality-triggering-token-text"]}
+                              >
+                                <em>&lt;– Add a Triggering Token Effect</em>
+                              </p>
+                            </div>
+                          )}
+                      </>
+                    </Droppable>
                   </>
-                </Droppable>
+                ) : (
+                  <hr className={styles["causality-divider"]} />
+                )}
               </motion.div>
               <div className={styles["causality-footer-area"]}>
                 <div className={styles["causality-time-delay"]}>
@@ -330,6 +339,19 @@ export const Causalities = memo(({ causalities, height }: CausalitiesProps) => {
                     )}
                   </div>
                 )}
+                <img
+                  className={styles["causality-compact-icon"]}
+                  src={causality.compact ? down : up}
+                  alt="accept icon"
+                  title="Accept New Causality Name"
+                  onClick={() => {
+                    updateCausalityData(
+                      causality.id,
+                      "compact",
+                      !causality.compact,
+                    );
+                  }}
+                />
               </div>
             </motion.div>
           );

@@ -79,6 +79,7 @@ export type Causality = {
   timestamp: string;
   delay: string;
   loopsArePaused?: boolean;
+  compact?: boolean;
   causes?: Cause[];
   effects?: Effect[];
   isEditNameModeOn?: boolean;

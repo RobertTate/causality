@@ -134,7 +134,7 @@ export const triggerCausality = async (
               if (
                 causalityIdsToReset &&
                 causalityIdsToReset.length > 0 &&
-                causality?.loopsArePaused === false &&
+                !causality?.loopsArePaused &&
                 ((causality.delay && causality.delay !== "0") ||
                   (causality?.causes?.[0]?.delay &&
                     causality?.causes?.[0]?.delay !== "0"))
